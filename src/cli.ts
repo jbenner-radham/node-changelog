@@ -1,3 +1,4 @@
+import { getBaseWithUnreleasedSection } from './commands/init.js';
 import { CHANGE_TYPES } from './constants.js';
 import type { ChangeType } from './types.js';
 import { hasUnreleasedHeader, withUnreleasedSection } from './unreleased.js';
@@ -14,16 +15,30 @@ import path from 'node:path';
 
 const cli = meow(
   ...getHelpTextAndOptions({
-    arguments: [{ name: 'unreleased' }],
+    arguments: [{ name: 'init | unreleased', isRequired: true }],
     importMeta: import.meta
   })
 );
 
-if (!cli.input.length) {
+const args = cli.input.map(value => value.toUpperCase());
+
+if (!args.length) {
   cli.showHelp();
 }
 
-if (cli.input.map(value => value.toUpperCase()).includes('UNRELEASED')) {
+if (args.includes('INIT')) {
+  const tree = getBaseWithUnreleasedSection();
+  const markdown = toMarkdown(tree, {
+    bullet: '-',
+    extensions: [gfmToMarkdown()],
+    setext: true,
+    tightDefinitions: true
+  });
+
+  console.log(markdown);
+}
+
+if (args.includes('UNRELEASED')) {
   const changelogPath = cli.input.length > 1 ? cli.input.at(1)! : 'CHANGELOG.md';
   const cwd = cli.input.length > 1 ? path.dirname(cli.input.at(1)!) : process.cwd();
   const source = await fs.readFile(changelogPath, 'utf8');
