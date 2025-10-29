@@ -4,7 +4,8 @@ import { hasUnreleasedHeader, withUnreleasedSection } from './commands/unrelease
 import { CHANGE_TYPES } from './constants.js';
 import type { ChangeType } from './types.js';
 import { readPackage } from './util.js';
-import { checkbox } from '@inquirer/prompts';
+import { checkbox, select } from '@inquirer/prompts';
+import { parse as parseVersion } from '@radham/semver';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { gfmFromMarkdown, gfmToMarkdown } from 'mdast-util-gfm';
 import { toMarkdown } from 'mdast-util-to-markdown';
@@ -67,7 +68,26 @@ const getCwdAndTree = async () => {
 
 if (args.includes('RELEASE')) {
   const { cwd, tree } = await getCwdAndTree();
-  const newTree = withRelease(tree, { pkg: readPackage({ cwd }), version: '0.1.0' });
+  const pkg = readPackage({ cwd });
+  const parsedVersion = parseVersion(pkg.version!);
+  const version = await select({
+    message: 'What version are you releasing?',
+    choices: [
+      {
+        description: 'Patch',
+        value: `${parsedVersion.major}.${parsedVersion.minor}.${parsedVersion.patch + 1}`
+      },
+      {
+        description: 'Minor',
+        value: `${parsedVersion.major}.${parsedVersion.minor + 1}.0`
+      },
+      {
+        description: 'Major',
+        value: `${parsedVersion.major + 1}.0.0`
+      }
+    ]
+  });
+  const newTree = withRelease(tree, { pkg, version });
 
   // console.dir(newTree, { depth: undefined });
   const markdown = toMarkdown(newTree, {

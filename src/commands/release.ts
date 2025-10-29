@@ -46,7 +46,7 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
           u('linkReference', { identifier: version, referenceType: 'shortcut' as const }, [
             text
           ]),
-          u('text', { value: ` - ${getDate()}` })
+          u('text', ` - ${getDate()}`)
         ];
       }
     } else if (

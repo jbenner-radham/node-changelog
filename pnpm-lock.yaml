@@ -11,6 +11,9 @@ importers:
       '@inquirer/prompts':
         specifier: ^7.9.0
         version: 7.9.0(@types/node@22.18.8)
+      '@radham/semver':
+        specifier: ^1.0.0
+        version: 1.0.0
       mdast-util-from-markdown:
         specifier: ^2.0.2
         version: 2.0.2
@@ -548,6 +551,10 @@ packages:
     resolution: {integrity: sha512-Jb/Jl5ORvq9i8jxAgab1Fo7ig56GVNhhcYQ9upfZJnf6XGdr/KdoLb/liI+yOxzih7vDoQvOG6391vsQNGC00w==}
     peerDependencies:
       eslint: '>=9.35.0'
+
+  '@radham/semver@1.0.0':
+    resolution: {integrity: sha512-ghnItzvnxMivBKW0Ga1sjCyx1n4QEzR1C4GiHoqmSaLml20cU1S4tYRxQP7/DB72bsGoqqYOLLd1s6SG3Uv8Dw==}
+    engines: {node: '>=18', pnpm: '>=10.15'}
 
   '@rollup/rollup-android-arm-eabi@4.52.5':
     resolution: {integrity: sha512-8c1vW4ocv3UOMp9K+gToY5zL2XiiVw3k7f1ksf4yO1FlDFQ1C2u72iACFnSOceJFsWskc2WZNqeRhFRPzv+wtQ==}
@@ -2380,6 +2387,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
+
+  '@radham/semver@1.0.0': {}
 
   '@rollup/rollup-android-arm-eabi@4.52.5':
     optional: true
