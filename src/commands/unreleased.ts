@@ -1,6 +1,6 @@
-import { CHANGE_TYPES, UNRELEASED_IDENTIFIER } from './constants.js';
-import type { ChangeType } from './types.js';
-import { getNormalizedRepository } from './util.js';
+import { CHANGE_TYPES, UNRELEASED_IDENTIFIER } from '../constants.js';
+import type { ChangeType } from '../types.js';
+import { getNormalizedRepository } from '../util.js';
 import type { Definition, Heading, Node, Nodes } from 'mdast';
 import type { PackageJson } from 'type-fest';
 import { u } from 'unist-builder';

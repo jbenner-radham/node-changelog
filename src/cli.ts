@@ -1,7 +1,7 @@
 import { getBaseWithUnreleasedSection } from './commands/init.js';
+import { hasUnreleasedHeader, withUnreleasedSection } from './commands/unreleased.js';
 import { CHANGE_TYPES } from './constants.js';
 import type { ChangeType } from './types.js';
-import { hasUnreleasedHeader, withUnreleasedSection } from './unreleased.js';
 import { readPackage } from './util.js';
 import { checkbox } from '@inquirer/prompts';
 import { fromMarkdown } from 'mdast-util-from-markdown';
@@ -16,11 +16,22 @@ import path from 'node:path';
 const cli = meow(
   ...getHelpTextAndOptions({
     arguments: [{ name: 'init | unreleased', isRequired: true }],
+    flags: {
+      headingStyle: {
+        choices: ['atx', 'setext'],
+        description:
+          'Use this style of headings (%CHOICES_OR%). Defaults to %DEFAULT%.',
+        default: 'setext',
+        shortFlag: 'H',
+        type: 'string'
+      }
+    },
     importMeta: import.meta
   })
 );
 
 const args = cli.input.map(value => value.toUpperCase());
+const setext = cli.flags.headingStyle === 'setext';
 
 if (!args.length) {
   cli.showHelp();
@@ -31,7 +42,7 @@ if (args.includes('INIT')) {
   const markdown = toMarkdown(tree, {
     bullet: '-',
     extensions: [gfmToMarkdown()],
-    setext: true,
+    setext,
     tightDefinitions: true
   });
 
@@ -56,7 +67,7 @@ if (args.includes('UNRELEASED')) {
   const markdown = toMarkdown(newTree, {
     bullet: '-',
     extensions: [gfmToMarkdown()],
-    setext: true,
+    setext,
     tightDefinitions: true
   });
 

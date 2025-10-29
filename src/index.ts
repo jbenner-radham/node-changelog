@@ -1,4 +1,4 @@
-import { withUnreleasedSection } from './unreleased.js';
+import { withUnreleasedSection } from './commands/unreleased.js';
 import { readPackage } from './util.js';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { gfmFromMarkdown, gfmToMarkdown } from 'mdast-util-gfm';
