@@ -29,10 +29,6 @@ export function withUnreleasedSection(tree: Nodes, { changeTypes = CHANGE_TYPES,
   let versionDefinitionFound = false;
 
   const newTree = flatMap(tree, (node: Node) => {
-    if (node.position) {
-      delete node.position;
-    }
-
     if (isHeading(node) && node.depth === 2 && hasPreexistingH2) {
       const [child] = (node as Heading).children;
 

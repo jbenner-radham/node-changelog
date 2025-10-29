@@ -34,10 +34,6 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
 
   const repository = getNormalizedRepository(pkg.repository!);
   const newTree = flatMap(tree, (node: Node) => {
-    if (node.position) {
-      delete node.position;
-    }
-
     if (isHeading(node) && node.depth === 2) {
       // console.dir(node, { depth: undefined });
       // console.debug(matches('heading[depth="2"]', node));

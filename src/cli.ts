@@ -13,6 +13,7 @@ import { getHelpTextAndOptions } from 'meowtastic';
 import { gfm } from 'micromark-extension-gfm';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { removePosition } from 'unist-util-remove-position';
 
 const cli = meow(
   ...getHelpTextAndOptions({
@@ -50,7 +51,7 @@ if (args.includes('INIT')) {
   console.log(markdown);
 }
 
-if (args.includes('RELEASE')) {
+const getCwdAndTree = async () => {
   const changelogPath = cli.input.length > 1 ? cli.input.at(1)! : 'CHANGELOG.md';
   const cwd = cli.input.length > 1 ? path.dirname(cli.input.at(1)!) : process.cwd();
   const source = await fs.readFile(changelogPath, 'utf8');
@@ -58,6 +59,14 @@ if (args.includes('RELEASE')) {
     extensions: [gfm()],
     mdastExtensions: [gfmFromMarkdown()]
   });
+
+  removePosition(tree, { force: true });
+
+  return { cwd, tree };
+};
+
+if (args.includes('RELEASE')) {
+  const { cwd, tree } = await getCwdAndTree();
   const newTree = withRelease(tree, { pkg: readPackage({ cwd }), version: '0.1.0' });
 
   // console.dir(newTree, { depth: undefined });
@@ -72,14 +81,7 @@ if (args.includes('RELEASE')) {
 }
 
 if (args.includes('UNRELEASED')) {
-  const changelogPath = cli.input.length > 1 ? cli.input.at(1)! : 'CHANGELOG.md';
-  const cwd = cli.input.length > 1 ? path.dirname(cli.input.at(1)!) : process.cwd();
-  const source = await fs.readFile(changelogPath, 'utf8');
-  const tree = fromMarkdown(source, {
-    extensions: [gfm()],
-    mdastExtensions: [gfmFromMarkdown()]
-  });
-
+  const { cwd, tree } = await getCwdAndTree();
   const changeTypes: ChangeType[] = hasUnreleasedHeader(tree)
     ? []
     : await checkbox({ message: 'Include which change types?', choices: CHANGE_TYPES });
