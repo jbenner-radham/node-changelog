@@ -1,8 +1,8 @@
 import { UNRELEASED_IDENTIFIER } from '../constants.js';
 import { isDefinition, isHeading, isText } from '../identity.js';
-import { getNormalizedRepository } from '../util.js';
+import { getDate, getNormalizedRepository } from '../util.js';
 import { hasUnreleasedHeader } from './unreleased.js';
-import type { Node, Root } from 'mdast';
+import type { Root } from 'mdast';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
 import type { PackageJson } from 'type-fest';
 import { u } from 'unist-builder';
@@ -18,6 +18,8 @@ export function withRelease(tree: Root, { pkg, version }: {
   }
 
   // console.debug('Else...');
+  // console.dir(tree, { depth: undefined });
+  return tree;
 }
 
 export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
@@ -33,14 +35,19 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
   }
 
   const repository = getNormalizedRepository(pkg.repository!);
-  const newTree = flatMap(tree, (node: Node) => {
+  const newTree = flatMap(tree, node => {
     if (isHeading(node) && node.depth === 2) {
-      // console.dir(node, { depth: undefined });
-      // console.debug(matches('heading[depth="2"]', node));
       const text = select(`text[value="${UNRELEASED_IDENTIFIER}"]`, node);
 
       if (isText(text)) {
+        // TODO: Handle instances where the `text` node is not the only child.
         text.value = version;
+        node.children = [
+          u('linkReference', { identifier: version, referenceType: 'shortcut' as const }, [
+            text
+          ]),
+          u('text', { value: ` - ${getDate()}` })
+        ];
       }
     } else if (
       isDefinition(node) &&
@@ -49,7 +56,6 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
       node.identifier = version;
       node.label = version;
       node.url = `${repository}/compare/v${pkg.version}...v${version}`;
-      console.dir(node, { depth: undefined });
     }
 
     return [node];
