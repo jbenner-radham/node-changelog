@@ -63,6 +63,9 @@ importers:
       '@types/node':
         specifier: ^22.18.8
         version: 22.18.8
+      '@types/unist':
+        specifier: ^3.0.3
+        version: 3.0.3
       '@vitest/coverage-v8':
         specifier: ^4.0.4
         version: 4.0.4(vitest@4.0.4(@types/debug@4.1.12)(@types/node@22.18.8)(tsx@4.20.6)(yaml@2.8.1))
