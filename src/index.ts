@@ -1,5 +1,5 @@
 import { withUnreleasedSection } from './unreleased.js';
-import { getPackage } from './util.js';
+import { readPackage } from './util.js';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { gfmFromMarkdown, gfmToMarkdown } from 'mdast-util-gfm';
 import { toMarkdown } from 'mdast-util-to-markdown';
@@ -141,7 +141,7 @@ const tree = fromMarkdown(source, {
 //   return [node];
 // });
 
-const pkg = getPackage(cwd);
+const pkg = readPackage({ cwd });
 const newTree = withUnreleasedSection(tree, { pkg });
 
 // console.dir(newTree, { depth: undefined });

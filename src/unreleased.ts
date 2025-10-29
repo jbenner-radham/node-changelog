@@ -1,4 +1,5 @@
-import { CHANGE_TYPES } from './constants.js';
+import { CHANGE_TYPES, UNRELEASED_IDENTIFIER } from './constants.js';
+import type { ChangeType } from './types.js';
 import { getNormalizedRepository } from './util.js';
 import type { Definition, Heading, Node, Nodes } from 'mdast';
 import type { PackageJson } from 'type-fest';
@@ -6,7 +7,10 @@ import { u } from 'unist-builder';
 import flatMap from 'unist-util-flatmap';
 import { select } from 'unist-util-select';
 
-export function withUnreleasedSection(tree: Nodes, { pkg }: { pkg: PackageJson }): Nodes {
+export function withUnreleasedSection(tree: Nodes, { changeTypes = CHANGE_TYPES, pkg }: {
+  changeTypes?: ChangeType[];
+  pkg: PackageJson;
+}): Nodes {
   if (!pkg.repository) {
     // Do something here...
   }
@@ -15,15 +19,32 @@ export function withUnreleasedSection(tree: Nodes, { pkg }: { pkg: PackageJson }
     // Also, do something here...
   }
 
-  const identifier = 'Unreleased';
+  const identifier = UNRELEASED_IDENTIFIER;
   const label = identifier;
   const repository = getNormalizedRepository(pkg.repository!);
+  const hasPreexistingH2 = Boolean(select(`heading[depth="2"] text[value="${identifier}"]`, tree));
 
   let h2Found = false;
   let versionDefinitionFound = false;
 
-  return flatMap(tree, (node: Node) => {
-    if (node.type === 'heading' && (node as Heading).depth === 2 && !h2Found) {
+  const newTree = flatMap(tree, (node: Node) => {
+    if (node.position) {
+      delete node.position;
+    }
+
+    if (node.type === 'heading' && (node as Heading).depth === 2 && hasPreexistingH2) {
+      const [child] = (node as Heading).children;
+
+      if (child?.type === 'text' && child?.value === identifier) {
+        (node as Heading).children = [
+          u('linkReference', { identifier, label, referenceType: 'shortcut' as const }, [
+            u('text', identifier)
+          ])
+        ];
+      }
+    }
+
+    if (node.type === 'heading' && (node as Heading).depth === 2 && !h2Found && !hasPreexistingH2) {
       h2Found = true;
 
       const unreleasedSection = [
@@ -32,7 +53,7 @@ export function withUnreleasedSection(tree: Nodes, { pkg }: { pkg: PackageJson }
             u('text', identifier)
           ])
         ]),
-        ...CHANGE_TYPES.flatMap(changeType =>
+        ...changeTypes.flatMap(changeType =>
           [
             u('heading', { depth: 3 }, [
               u('text', changeType)
@@ -70,16 +91,50 @@ export function withUnreleasedSection(tree: Nodes, { pkg }: { pkg: PackageJson }
 
     return [node];
   });
+
+  if (!hasUnreleasedHeader(newTree)) {
+    newTree.children.push(...[
+      u('heading', { depth: 2 }, [
+        u('linkReference', { identifier, label, referenceType: 'shortcut' }, [
+          u('text', identifier)
+        ])
+      ]),
+      ...changeTypes.flatMap(changeType =>
+        [
+          u('heading', { depth: 3 }, [
+            u('text', changeType)
+          ]),
+          u('list', { ordered: false, start: null, spread: false }, [
+            u('listItem', { checked: null, spread: false }, [
+              u('paragraph', [
+                u('text', '...')
+              ])
+            ])
+          ])
+        ]
+      )
+    ]);
+  }
+
+  if (!hasUnreleasedDefinition(newTree)) {
+    newTree.children.push(u('definition', {
+      identifier,
+      label,
+      url: `${repository}/compare/v${pkg.version}...HEAD`
+    }));
+  }
+
+  return newTree;
 }
 
 export function hasUnreleasedDefinition(tree: Nodes): boolean {
   return Boolean(
-    select('definition[identifier="Unreleased"]', tree)
+    select(`definition[identifier="${UNRELEASED_IDENTIFIER}"]`, tree)
   );
 }
 
 export function hasUnreleasedHeader(tree: Nodes): boolean {
   return Boolean(
-    select('heading[depth="2"] text[value="Unreleased"]', tree)
+    select(`heading[depth="2"] text[value="${UNRELEASED_IDENTIFIER}"]`, tree)
   );
 }
