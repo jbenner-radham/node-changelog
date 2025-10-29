@@ -1,6 +1,6 @@
 import { UNRELEASED_IDENTIFIER } from '../constants.js';
-import { isDefinition } from '../identity.js';
-import { getNormalizedRepository, isHeading, isText } from '../util.js';
+import { isDefinition, isHeading, isText } from '../identity.js';
+import { getNormalizedRepository } from '../util.js';
 import { hasUnreleasedHeader } from './unreleased.js';
 import type { Node, Root } from 'mdast';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';

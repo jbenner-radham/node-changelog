@@ -1,4 +1,5 @@
 import { CHANGE_TYPES, UNRELEASED_IDENTIFIER } from '../constants.js';
+import { isDefinition, isHeading } from '../identity.js';
 import type { ChangeType } from '../types.js';
 import { getNormalizedRepository } from '../util.js';
 import type { Definition, Heading, Node, Nodes } from 'mdast';
@@ -32,11 +33,11 @@ export function withUnreleasedSection(tree: Nodes, { changeTypes = CHANGE_TYPES,
       delete node.position;
     }
 
-    if (node.type === 'heading' && (node as Heading).depth === 2 && hasPreexistingH2) {
+    if (isHeading(node) && node.depth === 2 && hasPreexistingH2) {
       const [child] = (node as Heading).children;
 
       if (child?.type === 'text' && child?.value === identifier) {
-        (node as Heading).children = [
+        node.children = [
           u('linkReference', { identifier, label, referenceType: 'shortcut' as const }, [
             u('text', identifier)
           ])
@@ -44,7 +45,7 @@ export function withUnreleasedSection(tree: Nodes, { changeTypes = CHANGE_TYPES,
       }
     }
 
-    if (node.type === 'heading' && (node as Heading).depth === 2 && !h2Found && !hasPreexistingH2) {
+    if (isHeading(node) && node.depth === 2 && !h2Found && !hasPreexistingH2) {
       h2Found = true;
 
       const unreleasedSection = [
@@ -73,8 +74,8 @@ export function withUnreleasedSection(tree: Nodes, { changeTypes = CHANGE_TYPES,
     }
 
     if (
-      node.type === 'definition' &&
-      /^\d+\.\d+\.\d+$/.test((node as Definition).identifier) &&
+      isDefinition(node) &&
+      /^\d+\.\d+\.\d+$/.test(node.identifier) &&
       !versionDefinitionFound
     ) {
       versionDefinitionFound = true;
