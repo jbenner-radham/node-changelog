@@ -1,20 +1,20 @@
-import { withUnreleasedSection } from './commands/unreleased.js';
-import { readPackage } from './util.js';
-import { fromMarkdown } from 'mdast-util-from-markdown';
-import { gfmFromMarkdown, gfmToMarkdown } from 'mdast-util-gfm';
-import { toMarkdown } from 'mdast-util-to-markdown';
-import { gfm } from 'micromark-extension-gfm';
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import process from 'node:process';
+// import { withUnreleasedSection } from './commands/unreleased.js';
+// import { readPackage } from './util.js';
+// import { fromMarkdown } from 'mdast-util-from-markdown';
+// import { gfmFromMarkdown, gfmToMarkdown } from 'mdast-util-gfm';
+// import { toMarkdown } from 'mdast-util-to-markdown';
+// import { gfm } from 'micromark-extension-gfm';
+// import fs from 'node:fs/promises';
+// import path from 'node:path';
+// import process from 'node:process';
 
-const cwd = process.argv.length > 2 ? path.dirname(process.argv[2]!) : process.cwd();
-const changelogPath = process.argv.length > 2 ? process.argv[2]! : 'CHANGELOG.md';
-const source = await fs.readFile(changelogPath, 'utf8');
-const tree = fromMarkdown(source, {
-  extensions: [gfm()],
-  mdastExtensions: [gfmFromMarkdown()]
-});
+// const cwd = process.argv.length > 2 ? path.dirname(process.argv[2]!) : process.cwd();
+// const changelogPath = process.argv.length > 2 ? process.argv[2]! : 'CHANGELOG.md';
+// const source = await fs.readFile(changelogPath, 'utf8');
+// const tree = fromMarkdown(source, {
+//   extensions: [gfm()],
+//   mdastExtensions: [gfmFromMarkdown()]
+// });
 
 // console.debug(tree);
 
@@ -141,21 +141,21 @@ const tree = fromMarkdown(source, {
 //   return [node];
 // });
 
-const pkg = readPackage({ cwd });
-const newTree = withUnreleasedSection(tree, { pkg });
+// const pkg = readPackage({ cwd });
+// const newTree = withUnreleasedSection(tree, { pkg });
 
 // console.dir(newTree, { depth: undefined });
 
-const markdown = toMarkdown(newTree, {
-  bullet: '-',
-  extensions: [gfmToMarkdown()],
-  setext: true,
-  tightDefinitions: true
-});
+// const markdown = toMarkdown(newTree, {
+//   bullet: '-',
+//   extensions: [gfmToMarkdown()],
+//   setext: true,
+//   tightDefinitions: true
+// });
 
 // const formatted = await prettier.format(markdown, { parser: 'markdown' });
 
-console.debug(markdown);
+// console.debug(markdown);
 
 // console.debug(select('text[value="Unreleased"]', newTree));
 // console.debug(select('heading[depth="2"] text[value="Unreleased"]', newTree));
