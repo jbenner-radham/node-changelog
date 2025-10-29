@@ -1,3 +1,4 @@
+import type { Heading, Node, Text } from 'mdast';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
@@ -16,6 +17,14 @@ export function getNormalizedRepository(
     ? repository
     : repository.url
   );
+}
+
+export function isHeading(node?: Node): node is Heading {
+  return node?.type === 'heading';
+}
+
+export function isText(node?: Node): node is Text {
+  return node?.type === 'text';
 }
 
 export function readPackage({ cwd = process.cwd() }: { cwd?: string } = {}): PackageJson {

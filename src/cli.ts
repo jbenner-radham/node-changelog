@@ -1,4 +1,5 @@
 import { getBaseWithUnreleasedSection } from './commands/init.js';
+import { withRelease } from './commands/release.js';
 import { hasUnreleasedHeader, withUnreleasedSection } from './commands/unreleased.js';
 import { CHANGE_TYPES } from './constants.js';
 import type { ChangeType } from './types.js';
@@ -40,6 +41,27 @@ if (!args.length) {
 if (args.includes('INIT')) {
   const tree = getBaseWithUnreleasedSection();
   const markdown = toMarkdown(tree, {
+    bullet: '-',
+    extensions: [gfmToMarkdown()],
+    setext,
+    tightDefinitions: true
+  });
+
+  console.log(markdown);
+}
+
+if (args.includes('RELEASE')) {
+  const changelogPath = cli.input.length > 1 ? cli.input.at(1)! : 'CHANGELOG.md';
+  const cwd = cli.input.length > 1 ? path.dirname(cli.input.at(1)!) : process.cwd();
+  const source = await fs.readFile(changelogPath, 'utf8');
+  const tree = fromMarkdown(source, {
+    extensions: [gfm()],
+    mdastExtensions: [gfmFromMarkdown()]
+  });
+  const newTree = withRelease(tree, { pkg: readPackage({ cwd }), version: '0.1.0' });
+
+  // console.dir(newTree, { depth: undefined });
+  const markdown = toMarkdown(newTree, {
     bullet: '-',
     extensions: [gfmToMarkdown()],
     setext,
