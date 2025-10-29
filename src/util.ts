@@ -18,7 +18,7 @@ export function getNormalizedRepository(
   );
 }
 
-export function getPackage(cwd = process.cwd()): PackageJson {
+export function readPackage({ cwd = process.cwd() }: { cwd?: string } = {}): PackageJson {
   const source = readFileSync(path.join(cwd, 'package.json'), 'utf8');
 
   return JSON.parse(source);

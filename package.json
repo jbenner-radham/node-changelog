@@ -25,11 +25,15 @@
       "default": "./dist/cjs/index.js"
     }
   },
+  "bin": {
+    "changelog": "./dist/esm/cli.js"
+  },
   "files": [
     "dist",
     "CHANGELOG.md"
   ],
   "scripts": {
+    "bin": "tsx ./src/cli.ts",
     "prebuild": "rimraf ./dist",
     "build": "duo-build",
     "lint": "eslint .",
@@ -42,9 +46,12 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@inquirer/prompts": "^7.9.0",
     "mdast-util-from-markdown": "^2.0.2",
     "mdast-util-gfm": "^3.1.0",
     "mdast-util-to-markdown": "^2.1.2",
+    "meow": "^14.0.0",
+    "meowtastic": "^0.6.0",
     "micromark-extension-gfm": "^3.0.0",
     "micromark-util-normalize-identifier": "^2.0.1",
     "unist-builder": "^4.0.0",

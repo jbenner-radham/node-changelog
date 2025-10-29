@@ -8,3 +8,5 @@ export const CHANGE_TYPES: ChangeType[] = [
   'Removed',
   'Security'
 ] as const;
+
+export const UNRELEASED_IDENTIFIER = 'Unreleased' as const;
