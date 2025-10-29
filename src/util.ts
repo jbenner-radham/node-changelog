@@ -1,0 +1,29 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import process from 'node:process';
+import type { PackageJson } from 'type-fest';
+
+export function getDate(): string {
+  return new Date().toISOString()
+    .split('T')
+    .at(0)!;
+}
+
+export function getNormalizedRepository(
+  repository: string | { type: string; url: string; directory?: string }
+) {
+  return stripGitPrefixAndSuffixFromUrl(typeof repository === 'string'
+    ? repository
+    : repository.url
+  );
+}
+
+export function getPackage(cwd = process.cwd()): PackageJson {
+  const source = readFileSync(path.join(cwd, 'package.json'), 'utf8');
+
+  return JSON.parse(source);
+}
+
+export function stripGitPrefixAndSuffixFromUrl(url: string): string {
+  return url.replace(/^git\+/, '').replace(/\.git$/, '');
+}

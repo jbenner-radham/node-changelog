@@ -1,15 +1,15 @@
 {
-  "name": "node-starter",
+  "name": "starter",
   "version": "0.0.0",
   "description": "...",
   "keywords": [],
-  "homepage": "https://github.com/jbenner-radham/node-starter#readme",
+  "homepage": "https://github.com/jbenner-radham/node-changelog#readme",
   "bugs": {
-    "url": "https://github.com/jbenner-radham/node-starter/issues"
+    "url": "https://github.com/jbenner-radham/node-changelog/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jbenner-radham/node-starter.git"
+    "url": "git+https://github.com/jbenner-radham/node-changelog.git"
   },
   "license": "BSD-3-Clause",
   "author": "James Benner <hello@jamesbenner.com> (https://www.jamesbenner.com/)",
@@ -36,14 +36,28 @@
     "lint:fix": "eslint --fix .",
     "prepare": "husky",
     "prepublishOnly": "pnpm run build",
+    "start": "tsx ./src/index.ts",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
+  },
+  "dependencies": {
+    "mdast-util-from-markdown": "^2.0.2",
+    "mdast-util-gfm": "^3.1.0",
+    "mdast-util-to-markdown": "^2.1.2",
+    "micromark-extension-gfm": "^3.0.0",
+    "micromark-util-normalize-identifier": "^2.0.1",
+    "unist-builder": "^4.0.0",
+    "unist-util-filter": "^5.0.1",
+    "unist-util-flatmap": "^1.0.0",
+    "unist-util-select": "^5.1.0",
+    "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1.4.0",
     "@eslint/json": "^0.13.2",
     "@radham/eslint-config": "^8.1.0",
+    "@types/mdast": "^4.0.4",
     "@types/node": "^22.18.8",
     "@vitest/coverage-v8": "^4.0.4",
     "duo-build": "^0.2.1",
@@ -53,6 +67,8 @@
     "lint-staged": "^16.2.6",
     "rimraf": "^6.0.1",
     "sort-package-json": "^3.4.0",
+    "tsx": "^4.20.6",
+    "type-fest": "^5.1.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.4"
   },
