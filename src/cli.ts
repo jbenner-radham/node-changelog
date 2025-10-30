@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { getBaseWithUnreleasedSection } from './commands/init.js';
 import { withRelease } from './commands/release.js';
 import { hasUnreleasedHeader, withUnreleasedSection } from './commands/unreleased.js';
