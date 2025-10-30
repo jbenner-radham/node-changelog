@@ -18,7 +18,10 @@ import { removePosition } from 'unist-util-remove-position';
 
 const cli = meow(
   ...getHelpTextAndOptions({
-    arguments: [{ name: 'init | unreleased', isRequired: true }],
+    arguments: [
+      { name: 'init | release | unreleased', isRequired: true },
+      { name: 'changelog' }
+    ],
     flags: {
       headingStyle: {
         choices: ['atx', 'setext'],
@@ -63,11 +66,11 @@ const getCwdAndTree = async () => {
 
   removePosition(tree, { force: true });
 
-  return { cwd, tree };
+  return { cwd, filepath: path.relative(process.cwd(), changelogPath), tree };
 };
 
 if (args.includes('RELEASE')) {
-  const { cwd, tree } = await getCwdAndTree();
+  const { cwd, filepath, tree } = await getCwdAndTree();
   const pkg = readPackage({ cwd });
   const parsedVersion = parseVersion(pkg.version!);
   const version = await select({
@@ -100,11 +103,21 @@ if (args.includes('RELEASE')) {
     tightDefinitions: true
   });
 
-  console.log(markdown);
+  const writeTo = await select<string>({
+    choices: [filepath, 'stdout'],
+    default: filepath,
+    message: 'Where do you want to write the changelog?'
+  });
+
+  if (writeTo === 'stdout') {
+    console.log(markdown);
+  } else {
+    await fs.writeFile(writeTo, markdown, 'utf8');
+  }
 }
 
 if (args.includes('UNRELEASED')) {
-  const { cwd, tree } = await getCwdAndTree();
+  const { cwd, filepath, tree } = await getCwdAndTree();
   const changeTypes: ChangeType[] = hasUnreleasedHeader(tree)
     ? []
     : await checkbox({ message: 'Include which change types?', choices: CHANGE_TYPES });
@@ -118,5 +131,15 @@ if (args.includes('UNRELEASED')) {
     tightDefinitions: true
   });
 
-  console.log(markdown);
+  const writeTo = await select<string>({
+    choices: [filepath, 'stdout'],
+    default: filepath,
+    message: 'Where do you want to write the changelog?'
+  });
+
+  if (writeTo === 'stdout') {
+    console.log(markdown);
+  } else {
+    await fs.writeFile(writeTo, markdown, 'utf8');
+  }
 }

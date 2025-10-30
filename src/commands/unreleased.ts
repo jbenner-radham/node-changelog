@@ -2,7 +2,7 @@ import { CHANGE_TYPES, UNRELEASED_IDENTIFIER } from '../constants.js';
 import { isDefinition, isHeading } from '../identity.js';
 import type { ChangeType } from '../types.js';
 import { getNormalizedRepository } from '../util.js';
-import type { Definition, Heading, Node, Nodes } from 'mdast';
+import type { Definition, Node, Nodes } from 'mdast';
 import type { PackageJson } from 'type-fest';
 import { u } from 'unist-builder';
 import flatMap from 'unist-util-flatmap';
@@ -30,7 +30,7 @@ export function withUnreleasedSection(tree: Nodes, { changeTypes = CHANGE_TYPES,
 
   const newTree = flatMap(tree, (node: Node) => {
     if (isHeading(node) && node.depth === 2 && hasPreexistingH2) {
-      const [child] = (node as Heading).children;
+      const [child] = node.children;
 
       if (child?.type === 'text' && child?.value === identifier) {
         node.children = [
@@ -69,11 +69,7 @@ export function withUnreleasedSection(tree: Nodes, { changeTypes = CHANGE_TYPES,
       return [...unreleasedSection, node];
     }
 
-    if (
-      isDefinition(node) &&
-      /^\d+\.\d+\.\d+$/.test(node.identifier) &&
-      !versionDefinitionFound
-    ) {
+    if (isDefinition(node) && /^\d+\.\d+\.\d+$/.test(node.identifier) && !versionDefinitionFound) {
       versionDefinitionFound = true;
 
       const unreleasedDefinition: Definition = {

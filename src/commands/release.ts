@@ -15,15 +15,10 @@ export function withRelease(tree: Root, { changeTypes, pkg, version }: {
   pkg: PackageJson;
   version: string;
 }): Root {
-  // console.dir(tree, { depth: undefined });
-
   if (hasUnreleasedHeader(tree)) {
     return withUnreleasedAsRelease(tree, { pkg, version });
   }
 
-  // console.debug('Else...');
-  // console.dir(tree, { depth: undefined });
-  // return tree;
   const repository = getNormalizedRepository(pkg.repository!);
   let foundReleaseHeading = false;
   let foundVersionDefinition = false;
