@@ -63,6 +63,9 @@ importers:
       '@radham/eslint-config':
         specifier: ^8.1.0
         version: 8.1.0(eslint@9.38.0)(typescript@5.9.3)
+      '@radham/is-x':
+        specifier: ^0.5.1
+        version: 0.5.1
       '@types/mdast':
         specifier: ^4.0.4
         version: 4.0.4
@@ -551,6 +554,11 @@ packages:
     resolution: {integrity: sha512-Jb/Jl5ORvq9i8jxAgab1Fo7ig56GVNhhcYQ9upfZJnf6XGdr/KdoLb/liI+yOxzih7vDoQvOG6391vsQNGC00w==}
     peerDependencies:
       eslint: '>=9.35.0'
+
+  '@radham/is-x@0.5.1':
+    resolution: {integrity: sha512-axofnXj4/+o/3BaCShSfTa3/zMV2zCe8C4YrRWJgB3YBfTtTTEXY3aKtYXh4YOq4xyXMuFKe1ljpyg1rttGaSw==}
+    engines: {node: '>=22'}
+    hasBin: true
 
   '@radham/semver@1.0.0':
     resolution: {integrity: sha512-ghnItzvnxMivBKW0Ga1sjCyx1n4QEzR1C4GiHoqmSaLml20cU1S4tYRxQP7/DB72bsGoqqYOLLd1s6SG3Uv8Dw==}
@@ -1337,6 +1345,10 @@ packages:
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
 
+  log-symbols@7.0.1:
+    resolution: {integrity: sha512-ja1E3yCr9i/0hmBVaM0bfwDjnGy8I/s6PP4DFp+yP+a+mrHO4Rm7DtmnqROTUkHIkqffC84YY7AeqX6oFk0WFg==}
+    engines: {node: '>=18'}
+
   log-update@6.1.0:
     resolution: {integrity: sha512-9ie8ItPR6tjY5uYJh8K/Zrv/RMZ5VOlOWvtZdEHYSTFKZfIBPQa9tOAEeAWhd+AnIneLJ22w5fjOYtoutpWq5w==}
     engines: {node: '>=18'}
@@ -1407,6 +1419,10 @@ packages:
   meow@14.0.0:
     resolution: {integrity: sha512-JhC3R1f6dbspVtmF3vKjAWz1EVIvwFrGGPLSdU6rK79xBwHWTuHoLnRX/t1/zHS1Ch1Y2UtIrih7DAHuH9JFJA==}
     engines: {node: '>=20'}
+
+  meowtastic@0.3.1:
+    resolution: {integrity: sha512-uGWkjZqOkDFD6bVrr9hoDulH9Tnx0SdiUXWTyd08IkbGk3CE6zdFLS8ke5s/fWFMPjj/isMIjJW1eAUE8yqVvw==}
+    engines: {node: '>=22'}
 
   meowtastic@0.6.0:
     resolution: {integrity: sha512-hOcsI2JU0gVfLXBeyI0BFECTlQYmG7NQG6/AK7C/nIamEJYxmKFoih1zD3pmlbQvjJ4hO1V5sEQczPZcUl51Xw==}
@@ -2388,6 +2404,13 @@ snapshots:
       - supports-color
       - typescript
 
+  '@radham/is-x@0.5.1':
+    dependencies:
+      chalk: 5.6.2
+      log-symbols: 7.0.1
+      meow: 14.0.0
+      meowtastic: 0.3.1
+
   '@radham/semver@1.0.0': {}
 
   '@rollup/rollup-android-arm-eabi@4.52.5':
@@ -3166,6 +3189,11 @@ snapshots:
 
   lodash.merge@4.6.2: {}
 
+  log-symbols@7.0.1:
+    dependencies:
+      is-unicode-supported: 2.1.0
+      yoctocolors: 2.1.2
+
   log-update@6.1.0:
     dependencies:
       ansi-escapes: 7.1.1
@@ -3312,6 +3340,14 @@ snapshots:
       '@types/mdast': 4.0.4
 
   meow@14.0.0: {}
+
+  meowtastic@0.3.1:
+    dependencies:
+      chalk-pipe: 6.2.0
+      decamelize: 6.0.1
+      decamelize-keys: 2.0.1
+      is-plain-obj: 4.1.0
+      read-package-up: 11.0.0
 
   meowtastic@0.6.0:
     dependencies:

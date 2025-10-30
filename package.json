@@ -35,7 +35,8 @@
   "scripts": {
     "bin": "tsx ./src/cli.ts",
     "prebuild": "rimraf ./dist",
-    "build": "duo-build",
+    "build": "duo-build --packages external --platform node",
+    "postbuild": "is-x ./dist/esm/cli.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "prepare": "husky",
@@ -66,6 +67,7 @@
     "@eslint/compat": "^1.4.0",
     "@eslint/json": "^0.13.2",
     "@radham/eslint-config": "^8.1.0",
+    "@radham/is-x": "^0.5.1",
     "@types/mdast": "^4.0.4",
     "@types/node": "^22.18.8",
     "@types/unist": "^3.0.3",
@@ -82,7 +84,7 @@
     "typescript": "^5.9.3",
     "vitest": "^4.0.4"
   },
-  "packageManager": "pnpm@10.19.0",
+  "packageManager": "pnpm@10.20.0",
   "engines": {
     "node": ">=22"
   }
