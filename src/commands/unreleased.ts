@@ -29,17 +29,18 @@ export function withUnreleasedSection(tree: Nodes, { changeTypes = CHANGE_TYPES,
   let versionDefinitionFound = false;
 
   const newTree = flatMap(tree, (node: Node) => {
-    if (isHeading(node) && node.depth === 2 && hasPreexistingH2) {
-      const [child] = node.children;
-
-      if (child?.type === 'text' && child?.value === identifier) {
-        node.children = [
-          u('linkReference', { identifier, label, referenceType: 'shortcut' as const }, [
-            u('text', identifier)
-          ])
-        ];
-      }
-    }
+    // TODO: Disabling linking pre-existing "Unreleased" headers for now. Look into this later!
+    // if (isHeading(node) && node.depth === 2 && hasPreexistingH2) {
+    //   const [child] = node.children;
+    //
+    //   if (child?.type === 'text' && child?.value === identifier) {
+    //     node.children = [
+    //       u('linkReference', { identifier, label, referenceType: 'shortcut' as const }, [
+    //         u('text', identifier)
+    //       ])
+    //     ];
+    //   }
+    // }
 
     if (isHeading(node) && node.depth === 2 && !h2Found && !hasPreexistingH2) {
       h2Found = true;
@@ -109,7 +110,7 @@ export function withUnreleasedSection(tree: Nodes, { changeTypes = CHANGE_TYPES,
     ]);
   }
 
-  if (!hasUnreleasedDefinition(newTree)) {
+  if (hasUnreleasedHeaderLink(tree) && !hasUnreleasedDefinition(newTree)) {
     newTree.children.push(u('definition', {
       identifier,
       label,
@@ -129,5 +130,16 @@ export function hasUnreleasedDefinition(tree: Nodes): boolean {
 export function hasUnreleasedHeader(tree: Nodes): boolean {
   return Boolean(
     select(`heading[depth="2"] text[value="${UNRELEASED_IDENTIFIER}"]`, tree)
+  );
+}
+
+export function hasUnreleasedHeaderLink(tree: Nodes): boolean {
+  const identifier = UNRELEASED_IDENTIFIER;
+
+  return Boolean(
+    select(
+      `heading[depth="2"] linkReference[identifier="${identifier}"] text[value="${identifier}"]`,
+      tree
+    )
   );
 }
