@@ -87,7 +87,10 @@ if (args.includes('RELEASE')) {
       }
     ]
   });
-  const newTree = withRelease(tree, { pkg, version });
+  const changeTypes = hasUnreleasedHeader(tree)
+    ? []
+    : await checkbox<ChangeType>({ message: 'Include which change types?', choices: CHANGE_TYPES });
+  const newTree = withRelease(tree, { changeTypes, pkg, version });
 
   // console.dir(newTree, { depth: undefined });
   const markdown = toMarkdown(newTree, {

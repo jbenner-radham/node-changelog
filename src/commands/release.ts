@@ -1,5 +1,6 @@
 import { UNRELEASED_IDENTIFIER } from '../constants.js';
 import { isDefinition, isHeading, isText } from '../identity.js';
+import type { ChangeType } from '../types.js';
 import { getDate, getNormalizedRepository } from '../util.js';
 import { hasUnreleasedHeader } from './unreleased.js';
 import type { Root } from 'mdast';
@@ -9,17 +10,68 @@ import { u } from 'unist-builder';
 import flatMap from 'unist-util-flatmap';
 import { select } from 'unist-util-select';
 
-export function withRelease(tree: Root, { pkg, version }: {
+export function withRelease(tree: Root, { changeTypes, pkg, version }: {
+  changeTypes: ChangeType[];
   pkg: PackageJson;
   version: string;
 }): Root {
+  // console.dir(tree, { depth: undefined });
+
   if (hasUnreleasedHeader(tree)) {
     return withUnreleasedAsRelease(tree, { pkg, version });
   }
 
   // console.debug('Else...');
   // console.dir(tree, { depth: undefined });
-  return tree;
+  // return tree;
+  const repository = getNormalizedRepository(pkg.repository!);
+  let foundReleaseHeading = false;
+  let foundVersionDefinition = false;
+
+  return flatMap(tree, node => {
+    if (isHeading(node) && node.depth === 2 && !foundReleaseHeading) {
+      foundReleaseHeading = true;
+
+      return [
+        u('heading', { depth: 2 }, [
+          u('linkReference', { identifier: version, referenceType: 'shortcut' as const }, [
+            u('text', version)
+          ]),
+          u('text', ` - ${getDate()}`)
+        ]),
+        ...changeTypes.flatMap(changeType =>
+          [
+            u('heading', { depth: 3 }, [
+              u('text', changeType)
+            ]),
+            u('list', { ordered: false, start: null, spread: false }, [
+              u('listItem', { checked: null, spread: false }, [
+                u('paragraph', [
+                  u('text', '...')
+                ])
+              ])
+            ])
+          ]
+        ),
+        node
+      ];
+    }
+
+    if (isDefinition(node) && /^\d+\.\d+\.\d+$/.test(node.identifier) && !foundVersionDefinition) {
+      foundVersionDefinition = true;
+
+      const url = `${repository}/compare/v${pkg.version!}...v${version}`;
+
+      // console.dir(node, { depth: null });
+
+      return [
+        u('definition', { identifier: version, url }),
+        node
+      ];
+    }
+
+    return [node];
+  });
 }
 
 export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
