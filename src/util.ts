@@ -1,3 +1,4 @@
+import hostedGitInfo from 'hosted-git-info';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
@@ -12,18 +13,18 @@ export function getDate(): string {
 export function getNormalizedRepository(
   repository: string | { type: string; url: string; directory?: string }
 ) {
-  return stripGitPrefixAndSuffixFromUrl(typeof repository === 'string'
-    ? repository
-    : repository.url
+  const info = hostedGitInfo.fromUrl(
+    typeof repository === 'string'
+      ? repository
+      : repository.url,
+    { noCommittish: true, noGitPlus: true }
   );
+
+  return info?.https()?.replace(/\.git$/, '') ?? '';
 }
 
 export function readPackage({ cwd = process.cwd() }: { cwd?: string } = {}): PackageJson {
   const source = readFileSync(path.join(cwd, 'package.json'), 'utf8');
 
   return JSON.parse(source);
-}
-
-export function stripGitPrefixAndSuffixFromUrl(url: string): string {
-  return url.replace(/^git\+/, '').replace(/\.git$/, '');
 }

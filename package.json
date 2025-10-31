@@ -49,6 +49,7 @@
   "dependencies": {
     "@inquirer/prompts": "^7.9.0",
     "@radham/semver": "^1.0.0",
+    "hosted-git-info": "^9.0.2",
     "mdast-util-from-markdown": "^2.0.2",
     "mdast-util-gfm": "^3.1.0",
     "mdast-util-to-markdown": "^2.1.2",
@@ -68,6 +69,7 @@
     "@eslint/json": "^0.13.2",
     "@radham/eslint-config": "^8.1.0",
     "@radham/is-x": "^0.5.1",
+    "@types/hosted-git-info": "^3.0.5",
     "@types/mdast": "^4.0.4",
     "@types/node": "^22.18.8",
     "@types/unist": "^3.0.3",
