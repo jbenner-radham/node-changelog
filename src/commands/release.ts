@@ -102,6 +102,9 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
     ) {
       node.identifier = version;
       node.label = version;
+
+      // TODO: This URL works with GitHub and redirects to the correct URL for GitLab.
+      //       Look into this for BitBucket and possibly use the redirect syntax for GitLab.
       node.url = `${repository}/compare/v${pkg.version}...v${version}`;
     }
 
@@ -111,6 +114,7 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
   const definition = select(`definition[identifier="${version}"]`, newTree);
 
   if (!definition) {
+    // TODO: Look into if this URL syntax works for BitBucket and GitLab.
     newTree.children.push(
       u('definition', {
         identifier: version,

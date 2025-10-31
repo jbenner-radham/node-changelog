@@ -2,16 +2,16 @@ import { CHANGE_TYPES, UNRELEASED_IDENTIFIER } from '../constants.js';
 import { isDefinition, isHeading } from '../identity.js';
 import type { ChangeType } from '../types.js';
 import { getNormalizedRepository } from '../util.js';
-import type { Definition, Node, Nodes } from 'mdast';
+import type { Definition, Node, Nodes, Root } from 'mdast';
 import type { PackageJson } from 'type-fest';
 import { u } from 'unist-builder';
 import flatMap from 'unist-util-flatmap';
 import { select } from 'unist-util-select';
 
-export function withUnreleasedSection(tree: Nodes, { changeTypes = CHANGE_TYPES, pkg }: {
+export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, pkg }: {
   changeTypes?: ChangeType[];
   pkg: PackageJson;
-}): Nodes {
+}): Root {
   if (!pkg.repository) {
     // Do something here...
   }
@@ -111,6 +111,7 @@ export function withUnreleasedSection(tree: Nodes, { changeTypes = CHANGE_TYPES,
   }
 
   if (hasUnreleasedHeaderLink(tree) && !hasUnreleasedDefinition(newTree)) {
+    // TODO: Look into if this URL syntax works for BitBucket and GitLab.
     newTree.children.push(u('definition', {
       identifier,
       label,

@@ -17,6 +17,9 @@ importers:
       hosted-git-info:
         specifier: ^9.0.2
         version: 9.0.2
+      log-symbols:
+        specifier: ^7.0.1
+        version: 7.0.1
       mdast-util-from-markdown:
         specifier: ^2.0.2
         version: 2.0.2

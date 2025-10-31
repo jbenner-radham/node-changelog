@@ -24,7 +24,9 @@ export function getNormalizedRepository(
 }
 
 export function readPackage({ cwd = process.cwd() }: { cwd?: string } = {}): PackageJson {
-  const source = readFileSync(path.join(cwd, 'package.json'), 'utf8');
+  // Using a `TextDecoder` here strips out the BOM if present.
+  const buffer = readFileSync(path.join(cwd, 'package.json'));
+  const source = new TextDecoder().decode(buffer);
 
   return JSON.parse(source);
 }

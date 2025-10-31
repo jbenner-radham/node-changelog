@@ -6,16 +6,21 @@ import { hasUnreleasedHeader, withUnreleasedSection } from './commands/unrelease
 import { CHANGE_TYPES } from './constants.js';
 import type { ChangeType } from './types.js';
 import { readPackage } from './util.js';
-import { checkbox, select } from '@inquirer/prompts';
+import { checkbox, confirm, select } from '@inquirer/prompts';
 import { parse as parseVersion } from '@radham/semver';
+import logSymbols from 'log-symbols';
+import type { Root } from 'mdast';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { gfmFromMarkdown, gfmToMarkdown } from 'mdast-util-gfm';
 import { toMarkdown } from 'mdast-util-to-markdown';
 import meow from 'meow';
 import { getHelpTextAndOptions } from 'meowtastic';
 import { gfm } from 'micromark-extension-gfm';
+import { existsSync as fileExistsSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import process from 'node:process';
+import type { PackageJson } from 'type-fest';
 import { removePosition } from 'unist-util-remove-position';
 
 const cli = meow(
@@ -48,28 +53,35 @@ const cli = meow(
 
 const args = cli.input.map(value => value.toUpperCase());
 const bullet = cli.flags.bulletListMarker as '*' | '+' | '-';
+const changelogPath = cli.input.length > 1 ? cli.input.at(1)! : 'CHANGELOG.md';
+const cwd = cli.input.length > 1 ? path.dirname(cli.input.at(1)!) : process.cwd();
+const filepath = path.relative(process.cwd(), changelogPath);
+const isTty = Boolean(process.stdout.isTTY);
+const packageJsonPath = path.relative(cwd, 'package.json');
 const setext = cli.flags.headingStyle === 'setext';
 
-if (!args.length) {
-  cli.showHelp();
-}
+const ensurePackageHasRequiredProperties = (pkg: PackageJson) => {
+  if (!pkg.repository) {
+    console.error(
+      logSymbols.error,
+      `No \`repository\` found in \`${packageJsonPath}\`. Cannot continue.`
+    );
+    process.exit(1);
+  }
 
-if (args.includes('INIT')) {
-  const tree = getBaseWithUnreleasedSection();
-  const markdown = toMarkdown(tree, {
-    bullet,
-    extensions: [gfmToMarkdown()],
-    setext,
-    tightDefinitions: true
-  });
+  if (!pkg.version) {
+    console.error(
+      logSymbols.error,
+      `No \`version\` found in \`${packageJsonPath}\`. Cannot continue.`
+    );
+    process.exit(1);
+  }
+};
 
-  console.log(markdown);
-}
-
-const getCwdAndTree = async () => {
-  const changelogPath = cli.input.length > 1 ? cli.input.at(1)! : 'CHANGELOG.md';
-  const cwd = cli.input.length > 1 ? path.dirname(cli.input.at(1)!) : process.cwd();
-  const source = await fs.readFile(changelogPath, 'utf8');
+const getContext = async () => {
+  const pkg = readPackage({ cwd });
+  const buffer = await fs.readFile(filepath);
+  const source = new TextDecoder().decode(buffer);
   const tree = fromMarkdown(source, {
     extensions: [gfm()],
     mdastExtensions: [gfmFromMarkdown()]
@@ -77,27 +89,90 @@ const getCwdAndTree = async () => {
 
   removePosition(tree, { force: true });
 
-  return { cwd, filepath: path.relative(process.cwd(), changelogPath), tree };
+  return { pkg, tree };
 };
 
-if (args.includes('RELEASE')) {
-  const { cwd, filepath, tree } = await getCwdAndTree();
-  const pkg = readPackage({ cwd });
-  const parsedVersion = parseVersion(pkg.version!);
+const promptThenWriteChangelog = async ({ filepath, tree }: { filepath: string; tree: Root }) => {
+  /* eslint-disable @stylistic/indent */
+  const writeTo = isTty
+    ? await select<string>({
+        choices: [filepath, 'stdout'],
+        default: filepath,
+        message: 'Where do you want to write the changelog?'
+      })
+    : '';
+  /* eslint-enable @stylistic/indent */
+  const markdown = toMarkdown(tree, {
+    bullet,
+    extensions: [gfmToMarkdown()],
+    setext,
+    tightDefinitions: true
+  });
+
+  if (!isTty || writeTo === 'stdout') {
+    console.log(markdown);
+  } else {
+    if (fileExistsSync(writeTo)) {
+      const shouldOverwrite = await confirm({
+        default: false,
+        message: 'A changelog is already present. Overwrite it?'
+      });
+
+      if (!shouldOverwrite) {
+        return;
+      }
+    }
+
+    await fs.writeFile(writeTo, markdown);
+  }
+};
+
+const getReleaseVersionCandidates = (pkg: PackageJson) => {
+  const version = parseVersion(pkg.version!);
+
+  return {
+    major: `${version.major + 1}.0.0`,
+    minor: `${version.major}.${version.minor + 1}.0`,
+    patch: `${version.major}.${version.minor}.${version.patch + 1}`
+  };
+};
+
+if (!args.length) {
+  cli.showHelp();
+}
+
+if (args.includes('INIT')) {
+  const tree = getBaseWithUnreleasedSection();
+
+  await promptThenWriteChangelog({ filepath, tree });
+} else if (args.includes('RELEASE')) {
+  if (!isTty) {
+    console.error(
+      logSymbols.error,
+      'Cannot release without a TTY. Please run this command in an interactive shell.'
+    );
+    process.exit(1);
+  }
+
+  const { pkg, tree } = await getContext();
+
+  ensurePackageHasRequiredProperties(pkg);
+
+  const candidates = getReleaseVersionCandidates(pkg);
   const version = await select({
     message: 'What version are you releasing?',
     choices: [
       {
         description: 'Patch',
-        value: `${parsedVersion.major}.${parsedVersion.minor}.${parsedVersion.patch + 1}`
+        value: candidates.patch
       },
       {
         description: 'Minor',
-        value: `${parsedVersion.major}.${parsedVersion.minor + 1}.0`
+        value: candidates.minor
       },
       {
         description: 'Major',
-        value: `${parsedVersion.major + 1}.0.0`
+        value: candidates.major
       }
     ]
   });
@@ -107,50 +182,16 @@ if (args.includes('RELEASE')) {
   const newTree = withRelease(tree, { changeTypes, pkg, version });
 
   // console.dir(newTree, { depth: undefined });
-  const markdown = toMarkdown(newTree, {
-    bullet,
-    extensions: [gfmToMarkdown()],
-    setext,
-    tightDefinitions: true
-  });
+  await promptThenWriteChangelog({ filepath, tree: newTree });
+} else if (args.includes('UNRELEASED')) {
+  const { pkg, tree } = await getContext();
 
-  const writeTo = await select<string>({
-    choices: [filepath, 'stdout'],
-    default: filepath,
-    message: 'Where do you want to write the changelog?'
-  });
+  ensurePackageHasRequiredProperties(pkg);
 
-  if (writeTo === 'stdout') {
-    console.log(markdown);
-  } else {
-    await fs.writeFile(writeTo, markdown, 'utf8');
-  }
-}
-
-if (args.includes('UNRELEASED')) {
-  const { cwd, filepath, tree } = await getCwdAndTree();
-  const changeTypes: ChangeType[] = hasUnreleasedHeader(tree)
+  const changeTypes = hasUnreleasedHeader(tree)
     ? []
-    : await checkbox({ message: 'Include which change types?', choices: CHANGE_TYPES });
-
-  const pkg = readPackage({ cwd });
+    : await checkbox<ChangeType>({ message: 'Include which change types?', choices: CHANGE_TYPES });
   const newTree = withUnreleasedSection(tree, { changeTypes, pkg });
-  const markdown = toMarkdown(newTree, {
-    bullet,
-    extensions: [gfmToMarkdown()],
-    setext,
-    tightDefinitions: true
-  });
 
-  const writeTo = await select<string>({
-    choices: [filepath, 'stdout'],
-    default: filepath,
-    message: 'Where do you want to write the changelog?'
-  });
-
-  if (writeTo === 'stdout') {
-    console.log(markdown);
-  } else {
-    await fs.writeFile(writeTo, markdown, 'utf8');
-  }
+  await promptThenWriteChangelog({ filepath, tree: newTree });
 }
