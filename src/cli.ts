@@ -25,6 +25,14 @@ const cli = meow(
       { name: 'changelog' }
     ],
     flags: {
+      bulletListMarker: {
+        choices: ['*', '+', '-'],
+        description:
+          'Use this marker for bullet (unordered) lists (%CHOICES_OR%). Defaults to %DEFAULT%.',
+        default: '-',
+        shortFlag: 'b',
+        type: 'string'
+      },
       headingStyle: {
         choices: ['atx', 'setext'],
         description:
@@ -39,6 +47,7 @@ const cli = meow(
 );
 
 const args = cli.input.map(value => value.toUpperCase());
+const bullet = cli.flags.bulletListMarker as '*' | '+' | '-';
 const setext = cli.flags.headingStyle === 'setext';
 
 if (!args.length) {
@@ -48,7 +57,7 @@ if (!args.length) {
 if (args.includes('INIT')) {
   const tree = getBaseWithUnreleasedSection();
   const markdown = toMarkdown(tree, {
-    bullet: '-',
+    bullet,
     extensions: [gfmToMarkdown()],
     setext,
     tightDefinitions: true
@@ -99,7 +108,7 @@ if (args.includes('RELEASE')) {
 
   // console.dir(newTree, { depth: undefined });
   const markdown = toMarkdown(newTree, {
-    bullet: '-',
+    bullet,
     extensions: [gfmToMarkdown()],
     setext,
     tightDefinitions: true
@@ -127,7 +136,7 @@ if (args.includes('UNRELEASED')) {
   const pkg = readPackage({ cwd });
   const newTree = withUnreleasedSection(tree, { changeTypes, pkg });
   const markdown = toMarkdown(newTree, {
-    bullet: '-',
+    bullet,
     extensions: [gfmToMarkdown()],
     setext,
     tightDefinitions: true
