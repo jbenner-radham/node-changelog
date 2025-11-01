@@ -23,6 +23,10 @@ export function getNormalizedRepository(
   return info?.https()?.replace(/\.git$/, '') ?? '';
 }
 
+export function isVersion(value: string): boolean {
+  return /^\d+\.\d+\.\d+$/.test(value);
+}
+
 export function readPackage({ cwd = process.cwd() }: { cwd?: string } = {}): PackageJson {
   // Using a `TextDecoder` here strips out the BOM if present.
   const buffer = readFileSync(path.join(cwd, 'package.json'));

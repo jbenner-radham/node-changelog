@@ -1,10 +1,16 @@
+import {
+  buildChangeTypeSection,
+  buildLinkedVersionHeadingWithDate,
+  buildUnreleasedDefinition,
+  buildUnreleasedHeading
+} from '../builder.js';
 import { CHANGE_TYPES, UNRELEASED_IDENTIFIER } from '../constants.js';
 import { isDefinition, isHeading } from '../identity.js';
 import type { ChangeType } from '../types.js';
-import { getNormalizedRepository } from '../util.js';
-import type { Definition, Node, Nodes, Root } from 'mdast';
+import { getNormalizedRepository, isVersion } from '../util.js';
+import type { Node, Nodes, Root } from 'mdast';
+import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
 import type { PackageJson } from 'type-fest';
-import { u } from 'unist-builder';
 import flatMap from 'unist-util-flatmap';
 import { select } from 'unist-util-select';
 
@@ -12,16 +18,7 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
   changeTypes?: ChangeType[];
   pkg: PackageJson;
 }): Root {
-  if (!pkg.repository) {
-    // Do something here...
-  }
-
-  if (!pkg.version) {
-    // Also, do something here...
-  }
-
   const identifier = UNRELEASED_IDENTIFIER;
-  const label = identifier;
   const repository = getNormalizedRepository(pkg.repository!);
   const hasPreexistingH2 = hasUnreleasedHeader(tree);
 
@@ -46,39 +43,20 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
       h2Found = true;
 
       const unreleasedSection = [
-        u('heading', { depth: 2 }, [
-          u('linkReference', { identifier, label, referenceType: 'shortcut' }, [
-            u('text', identifier)
-          ])
-        ]),
-        ...changeTypes.flatMap(changeType =>
-          [
-            u('heading', { depth: 3 }, [
-              u('text', changeType)
-            ]),
-            u('list', { ordered: false, start: null, spread: false }, [
-              u('listItem', { checked: null, spread: false }, [
-                u('paragraph', [
-                  u('text', '...')
-                ])
-              ])
-            ])
-          ]
-        )
+        buildLinkedVersionHeadingWithDate(identifier),
+        ...changeTypes.flatMap(buildChangeTypeSection)
       ];
 
       return [...unreleasedSection, node];
     }
 
-    if (isDefinition(node) && /^\d+\.\d+\.\d+$/.test(node.identifier) && !versionDefinitionFound) {
+    if (isDefinition(node) && isVersion(node.identifier) && !versionDefinitionFound) {
       versionDefinitionFound = true;
 
-      const unreleasedDefinition: Definition = {
-        type: 'definition',
-        identifier,
-        label,
-        url: `${repository}/compare/v${pkg.version}...HEAD`
-      };
+      const unreleasedDefinition = buildUnreleasedDefinition({
+        from: pkg.version!,
+        repository
+      });
 
       return [unreleasedDefinition, node];
     }
@@ -88,43 +66,23 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
 
   if (!hasUnreleasedHeader(newTree)) {
     newTree.children.push(...[
-      u('heading', { depth: 2 }, [
-        u('linkReference', { identifier, label, referenceType: 'shortcut' }, [
-          u('text', identifier)
-        ])
-      ]),
-      ...changeTypes.flatMap(changeType =>
-        [
-          u('heading', { depth: 3 }, [
-            u('text', changeType)
-          ]),
-          u('list', { ordered: false, start: null, spread: false }, [
-            u('listItem', { checked: null, spread: false }, [
-              u('paragraph', [
-                u('text', '...')
-              ])
-            ])
-          ])
-        ]
-      )
+      buildUnreleasedHeading(),
+      ...changeTypes.flatMap(buildChangeTypeSection)
     ]);
   }
 
   if (hasUnreleasedHeaderLink(tree) && !hasUnreleasedDefinition(newTree)) {
-    // TODO: Look into if this URL syntax works for BitBucket and GitLab.
-    newTree.children.push(u('definition', {
-      identifier,
-      label,
-      url: `${repository}/compare/v${pkg.version}...HEAD`
-    }));
+    newTree.children.push(buildUnreleasedDefinition({ from: pkg.version!, repository }));
   }
 
   return newTree;
 }
 
 export function hasUnreleasedDefinition(tree: Nodes): boolean {
+  const identifier = normalizeIdentifier(UNRELEASED_IDENTIFIER);
+
   return Boolean(
-    select(`definition[identifier="${UNRELEASED_IDENTIFIER}"]`, tree)
+    select(`definition[identifier="${identifier}"]`, tree)
   );
 }
 

@@ -85,6 +85,7 @@
     "tsx": "^4.20.6",
     "type-fest": "^5.1.0",
     "typescript": "^5.9.3",
+    "unist-util-inspect": "^8.1.0",
     "vitest": "^4.0.4"
   },
   "packageManager": "pnpm@10.20.0",

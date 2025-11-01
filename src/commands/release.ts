@@ -1,7 +1,13 @@
+import {
+  buildChangeTypeSection,
+  buildLinkedVersionHeadingWithDate,
+  buildVersionDefinition
+} from '../builder.js';
 import { UNRELEASED_IDENTIFIER } from '../constants.js';
 import { isDefinition, isHeading, isText } from '../identity.js';
+import { hasDefinition, hasDepthTwoHeading } from '../tree-contains.js';
 import type { ChangeType } from '../types.js';
-import { getDate, getNormalizedRepository } from '../util.js';
+import { getDate, getNormalizedRepository, isVersion } from '../util.js';
 import { hasUnreleasedHeader } from './unreleased.js';
 import type { Root } from 'mdast';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
@@ -15,11 +21,37 @@ export function withRelease(tree: Root, { changeTypes, pkg, version }: {
   pkg: PackageJson;
   version: string;
 }): Root {
+  const repository = getNormalizedRepository(pkg.repository!);
+
+  if (!hasDefinition(tree) && !hasDepthTwoHeading(tree)) {
+    tree.children.push(...[
+      buildLinkedVersionHeadingWithDate(version),
+      ...changeTypes.flatMap(buildChangeTypeSection),
+      buildVersionDefinition({ to: version, repository })
+    ]);
+
+    return tree;
+  }
+
   if (hasUnreleasedHeader(tree)) {
     return withUnreleasedAsRelease(tree, { pkg, version });
   }
 
-  const repository = getNormalizedRepository(pkg.repository!);
+  // const hasVersionHeadings = Boolean(
+  //   selectAll('heading[depth="2"]', tree)
+  //     .filter(node => {
+  //       const [child] = (node as Heading).children ?? [];
+  //
+  //       return child?.type === 'linkReference' && /^\d+\.\d+\.\d+$/.test(child?.identifier);
+  //     }).length
+  // );
+  // const hasVersionDefinitions = Boolean(
+  //   selectAll('definition', tree)
+  //     .filter(definition =>
+  //       /^\d+\.\d+\.\d+$/.test((definition as Definition).identifier)
+  //     ).length
+  // );
+
   let foundReleaseHeading = false;
   let foundVersionDefinition = false;
 
@@ -28,39 +60,17 @@ export function withRelease(tree: Root, { changeTypes, pkg, version }: {
       foundReleaseHeading = true;
 
       return [
-        u('heading', { depth: 2 }, [
-          u('linkReference', { identifier: version, referenceType: 'shortcut' as const }, [
-            u('text', version)
-          ]),
-          u('text', ` - ${getDate()}`)
-        ]),
-        ...changeTypes.flatMap(changeType =>
-          [
-            u('heading', { depth: 3 }, [
-              u('text', changeType)
-            ]),
-            u('list', { ordered: false, start: null, spread: false }, [
-              u('listItem', { checked: null, spread: false }, [
-                u('paragraph', [
-                  u('text', '...')
-                ])
-              ])
-            ])
-          ]
-        ),
+        buildLinkedVersionHeadingWithDate(version),
+        ...changeTypes.flatMap(buildChangeTypeSection),
         node
       ];
     }
 
-    if (isDefinition(node) && /^\d+\.\d+\.\d+$/.test(node.identifier) && !foundVersionDefinition) {
+    if (isDefinition(node) && isVersion(node.identifier) && !foundVersionDefinition) {
       foundVersionDefinition = true;
 
-      const url = `${repository}/compare/v${pkg.version!}...v${version}`;
-
-      // console.dir(node, { depth: null });
-
       return [
-        u('definition', { identifier: version, url }),
+        buildVersionDefinition({ from: pkg.version!, to: version, repository }),
         node
       ];
     }
@@ -73,14 +83,6 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
   pkg: PackageJson;
   version: string;
 }): Root {
-  if (!pkg.repository) {
-    // Do something here...
-  }
-
-  if (!pkg.version) {
-    // Also, do something here...
-  }
-
   const repository = getNormalizedRepository(pkg.repository!);
   const newTree = flatMap(tree, node => {
     if (isHeading(node) && node.depth === 2) {
@@ -114,14 +116,7 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
   const definition = select(`definition[identifier="${version}"]`, newTree);
 
   if (!definition) {
-    // TODO: Look into if this URL syntax works for BitBucket and GitLab.
-    newTree.children.push(
-      u('definition', {
-        identifier: version,
-        label: version,
-        url: `${repository}/releases/tag/v${version}`
-      })
-    );
+    newTree.children.push(buildVersionDefinition({ to: version, repository }));
   }
 
   return newTree;
