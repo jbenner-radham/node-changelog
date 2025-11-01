@@ -1,7 +1,7 @@
 {
-  "name": "starter",
+  "name": "@radham/changelog",
   "version": "0.0.0",
-  "description": "...",
+  "description": "A CLI tool for managing \"Keep a Changelog\" changelogs.",
   "keywords": [],
   "homepage": "https://github.com/jbenner-radham/node-changelog#readme",
   "bugs": {
@@ -41,7 +41,6 @@
     "lint:fix": "eslint --fix .",
     "prepare": "husky",
     "prepublishOnly": "pnpm run build",
-    "start": "tsx ./src/index.ts",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
