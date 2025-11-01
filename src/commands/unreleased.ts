@@ -20,7 +20,7 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
 }): Root {
   const identifier = UNRELEASED_IDENTIFIER;
   const repository = getNormalizedRepository(pkg.repository!);
-  const hasPreexistingH2 = hasUnreleasedHeader(tree);
+  const hasPreexistingH2 = hasUnreleasedHeading(tree);
 
   let h2Found = false;
   let versionDefinitionFound = false;
@@ -64,14 +64,14 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
     return [node];
   });
 
-  if (!hasUnreleasedHeader(newTree)) {
+  if (!hasUnreleasedHeading(newTree)) {
     newTree.children.push(...[
       buildUnreleasedHeading(),
       ...changeTypes.flatMap(buildChangeTypeSection)
     ]);
   }
 
-  if (hasUnreleasedHeaderLink(tree) && !hasUnreleasedDefinition(newTree)) {
+  if (hasUnreleasedHeadingLink(tree) && !hasUnreleasedDefinition(newTree)) {
     newTree.children.push(buildUnreleasedDefinition({ from: pkg.version!, repository }));
   }
 
@@ -86,13 +86,13 @@ export function hasUnreleasedDefinition(tree: Nodes): boolean {
   );
 }
 
-export function hasUnreleasedHeader(tree: Nodes): boolean {
+export function hasUnreleasedHeading(tree: Nodes): boolean {
   return Boolean(
     select(`heading[depth="2"] text[value="${UNRELEASED_IDENTIFIER}"]`, tree)
   );
 }
 
-export function hasUnreleasedHeaderLink(tree: Nodes): boolean {
+export function hasUnreleasedHeadingLink(tree: Nodes): boolean {
   const identifier = UNRELEASED_IDENTIFIER;
 
   return Boolean(

@@ -8,7 +8,7 @@ import { isDefinition, isHeading, isText } from '../identity.js';
 import { hasDefinition, hasDepthTwoHeading } from '../tree-contains.js';
 import type { ChangeType } from '../types.js';
 import { getDate, getNormalizedRepository, isVersion } from '../util.js';
-import { hasUnreleasedHeader } from './unreleased.js';
+import { hasUnreleasedHeading } from './unreleased.js';
 import type { Root } from 'mdast';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
 import type { PackageJson } from 'type-fest';
@@ -33,7 +33,7 @@ export function withRelease(tree: Root, { changeTypes, pkg, version }: {
     return tree;
   }
 
-  if (hasUnreleasedHeader(tree)) {
+  if (hasUnreleasedHeading(tree)) {
     return withUnreleasedAsRelease(tree, { pkg, version });
   }
 

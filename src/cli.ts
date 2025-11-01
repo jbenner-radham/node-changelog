@@ -2,7 +2,7 @@
 
 import { getBaseWithUnreleasedSection } from './commands/init.js';
 import { withRelease } from './commands/release.js';
-import { hasUnreleasedHeader, withUnreleasedSection } from './commands/unreleased.js';
+import { hasUnreleasedHeading, withUnreleasedSection } from './commands/unreleased.js';
 import { CHANGE_TYPES } from './constants.js';
 import type { ChangeType } from './types.js';
 import { readPackage } from './util.js';
@@ -176,7 +176,7 @@ if (args.includes('INIT')) {
       }
     ]
   });
-  const changeTypes = hasUnreleasedHeader(tree)
+  const changeTypes = hasUnreleasedHeading(tree)
     ? []
     : await checkbox<ChangeType>({ message: 'Include which change types?', choices: CHANGE_TYPES });
   const newTree = withRelease(tree, { changeTypes, pkg, version });
@@ -188,7 +188,7 @@ if (args.includes('INIT')) {
 
   ensurePackageHasRequiredProperties(pkg);
 
-  const changeTypes = hasUnreleasedHeader(tree)
+  const changeTypes = hasUnreleasedHeading(tree)
     ? []
     : await checkbox<ChangeType>({ message: 'Include which change types?', choices: CHANGE_TYPES });
   const newTree = withUnreleasedSection(tree, { changeTypes, pkg });
