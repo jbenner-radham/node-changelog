@@ -149,7 +149,7 @@ if (args.includes('INIT')) {
   if (!isTty) {
     console.error(
       logSymbols.error,
-      'Cannot release without a TTY. Please run this command in an interactive shell.'
+      'This command requires input from prompts. Please run this command in an interactive shell.'
     );
     process.exit(1);
   }
