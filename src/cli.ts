@@ -100,7 +100,7 @@ const promptThenWriteChangelog = async ({ filepath, tree }: { filepath: string; 
         default: filepath,
         message: 'Where do you want to write the changelog?'
       })
-    : '';
+    : 'stdout';
   /* eslint-enable @stylistic/indent */
   const markdown = toMarkdown(tree, {
     bullet,
@@ -109,7 +109,7 @@ const promptThenWriteChangelog = async ({ filepath, tree }: { filepath: string; 
     tightDefinitions: true
   });
 
-  if (!isTty || writeTo === 'stdout') {
+  if (writeTo === 'stdout') {
     console.log(markdown);
   } else {
     if (fileExistsSync(writeTo)) {
