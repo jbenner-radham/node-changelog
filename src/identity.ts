@@ -1,13 +1,14 @@
-import type { Definition, Heading, Node, Text } from 'mdast';
+import isPlainObject from 'is-plain-obj';
+import type { Definition, Heading, Text } from 'mdast';
 
-export function isDefinition(node?: Node): node is Definition {
-  return node?.type === 'definition';
+export function isDefinition(value: unknown): value is Definition {
+  return isPlainObject(value) && value.type === 'definition';
 }
 
-export function isHeading(node?: Node): node is Heading {
-  return node?.type === 'heading';
+export function isHeading(value: unknown): value is Heading {
+  return isPlainObject(value) && value.type === 'heading';
 }
 
-export function isText(node?: Node): node is Text {
-  return node?.type === 'text';
+export function isText(value: unknown): value is Text {
+  return isPlainObject(value) && value.type === 'text';
 }
