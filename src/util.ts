@@ -23,7 +23,7 @@ export function getNormalizedRepository(
   return info?.https()?.replace(/\.git$/, '') ?? '';
 }
 
-export function isVersion(value: string): boolean {
+export function isVersionString(value: string): boolean {
   return /^\d+\.\d+\.\d+$/.test(value);
 }
 

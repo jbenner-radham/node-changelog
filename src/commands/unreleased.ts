@@ -3,11 +3,12 @@ import {
   buildLinkedVersionHeadingWithDate,
   buildUnreleasedDefinition,
   buildUnreleasedHeading
-} from '../builder.js';
+} from '../builders.js';
 import { CHANGE_TYPES, UNRELEASED_IDENTIFIER } from '../constants.js';
 import { isDefinition, isHeading } from '../identity.js';
 import type { ChangeType } from '../types.js';
-import { getNormalizedRepository, isVersion } from '../util.js';
+import { isVersionString } from '../util.js';
+import hostedGitInfo from 'hosted-git-info';
 import type { Node, Nodes, Root } from 'mdast';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
 import type { PackageJson } from 'type-fest';
@@ -19,15 +20,15 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
   pkg: PackageJson;
 }): Root {
   const identifier = UNRELEASED_IDENTIFIER;
-  const repository = getNormalizedRepository(pkg.repository!);
-  const hasPreexistingH2 = hasUnreleasedHeading(tree);
+  const repository = hostedGitInfo.fromManifest(pkg).browse();
+  const hasPreexistingUnreleasedHeading = hasUnreleasedHeading(tree);
 
-  let h2Found = false;
+  let depthTwoHeadingFound = false;
   let versionDefinitionFound = false;
 
   const newTree = flatMap(tree, (node: Node) => {
     // TODO: Disabling linking pre-existing "Unreleased" headers for now. Look into this later!
-    // if (isHeading(node) && node.depth === 2 && hasPreexistingH2) {
+    // if (isHeading(node) && node.depth === 2 && hasPreexistingUnreleasedHeading) {
     //   const [child] = node.children;
     //
     //   if (child?.type === 'text' && child?.value === identifier) {
@@ -39,8 +40,13 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
     //   }
     // }
 
-    if (isHeading(node) && node.depth === 2 && !h2Found && !hasPreexistingH2) {
-      h2Found = true;
+    if (
+      isHeading(node) &&
+      node.depth === 2 &&
+      !depthTwoHeadingFound &&
+      !hasPreexistingUnreleasedHeading
+    ) {
+      depthTwoHeadingFound = true;
 
       const unreleasedSection = [
         buildLinkedVersionHeadingWithDate(identifier),
@@ -50,7 +56,7 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
       return [...unreleasedSection, node];
     }
 
-    if (isDefinition(node) && isVersion(node.identifier) && !versionDefinitionFound) {
+    if (isDefinition(node) && isVersionString(node.identifier) && !versionDefinitionFound) {
       versionDefinitionFound = true;
 
       const unreleasedDefinition = buildUnreleasedDefinition({

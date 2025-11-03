@@ -2,14 +2,14 @@ import {
   buildChangeTypeSection,
   buildLinkedVersionHeadingWithDate,
   buildVersionDefinition
-} from '../builder.js';
+} from '../builders.js';
 import { UNRELEASED_IDENTIFIER } from '../constants.js';
 import { isDefinition, isHeading, isText } from '../identity.js';
 import { hasDefinition, hasDepthTwoHeading } from '../tree-contains.js';
 import type { ChangeType } from '../types.js';
-import { getDate, getNormalizedRepository, isVersion } from '../util.js';
+import { getDate, getNormalizedRepository, isVersionString } from '../util.js';
 import { hasUnreleasedHeading } from './unreleased.js';
-import type { Root } from 'mdast';
+import type { Definition, Root, Text } from 'mdast';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
 import type { PackageJson } from 'type-fest';
 import { u } from 'unist-builder';
@@ -66,7 +66,7 @@ export function withRelease(tree: Root, { changeTypes, pkg, version }: {
       ];
     }
 
-    if (isDefinition(node) && isVersion(node.identifier) && !foundVersionDefinition) {
+    if (isDefinition(node) && isVersionString(node.identifier) && !foundVersionDefinition) {
       foundVersionDefinition = true;
 
       return [
@@ -86,7 +86,7 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
   const repository = getNormalizedRepository(pkg.repository!);
   const newTree = flatMap(tree, node => {
     if (isHeading(node) && node.depth === 2) {
-      const text = select(`text[value="${UNRELEASED_IDENTIFIER}"]`, node);
+      const text = select<Text>(`text[value="${UNRELEASED_IDENTIFIER}"]`, node);
 
       if (isText(text)) {
         // TODO: Handle instances where the `text` node is not the only child.
@@ -113,7 +113,7 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
     return [node];
   });
 
-  const definition = select(`definition[identifier="${version}"]`, newTree);
+  const definition = select<Definition>(`definition[identifier="${version}"]`, newTree);
 
   if (!definition) {
     newTree.children.push(buildVersionDefinition({ to: version, repository }));
