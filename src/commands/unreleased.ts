@@ -1,6 +1,5 @@
 import {
   buildChangeTypeSection,
-  buildLinkedVersionHeadingWithDate,
   buildUnreleasedDefinition,
   buildUnreleasedHeading
 } from '../builders.js';
@@ -19,7 +18,6 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
   changeTypes?: ChangeType[];
   pkg: PackageJson;
 }): Root {
-  const identifier = UNRELEASED_IDENTIFIER;
   const repository = hostedGitInfo.fromManifest(pkg).browse();
   const hasPreexistingUnreleasedHeading = hasUnreleasedHeading(tree);
 
@@ -49,7 +47,7 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
       depthTwoHeadingFound = true;
 
       const unreleasedSection = [
-        buildLinkedVersionHeadingWithDate(identifier),
+        buildUnreleasedHeading(),
         ...changeTypes.flatMap(buildChangeTypeSection)
       ];
 
