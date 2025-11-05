@@ -22,19 +22,20 @@ export function withRelease(tree: Root, { changeTypes, pkg, version }: {
   version: string;
 }): Root {
   const repository = getNormalizedRepository(pkg.repository!);
+  const clonedTree = structuredClone(tree);
 
-  if (!hasDefinition(tree) && !hasDepthTwoHeading(tree)) {
-    tree.children.push(...[
+  if (!hasDefinition(clonedTree) && !hasDepthTwoHeading(clonedTree)) {
+    clonedTree.children.push(...[
       buildLinkedVersionHeadingWithDate(version),
       ...changeTypes.flatMap(buildChangeTypeSection),
       buildVersionDefinition({ to: version, repository })
     ]);
 
-    return tree;
+    return clonedTree;
   }
 
-  if (hasUnreleasedHeading(tree)) {
-    return withUnreleasedAsRelease(tree, { pkg, version });
+  if (hasUnreleasedHeading(clonedTree)) {
+    return withUnreleasedAsRelease(clonedTree, { pkg, version });
   }
 
   // const hasVersionHeadings = Boolean(
@@ -55,7 +56,7 @@ export function withRelease(tree: Root, { changeTypes, pkg, version }: {
   let foundReleaseHeading = false;
   let foundVersionDefinition = false;
 
-  return flatMap(tree, node => {
+  return flatMap(clonedTree, node => {
     if (isHeading(node) && node.depth === 2 && !foundReleaseHeading) {
       foundReleaseHeading = true;
 
