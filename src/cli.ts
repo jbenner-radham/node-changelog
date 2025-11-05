@@ -81,11 +81,12 @@ const ensurePackageHasRequiredProperties = (pkg: PackageJson) => {
 const getContext = async () => {
   const pkg = readPackage({ cwd });
   const buffer = await fs.readFile(filepath);
-  const source = new TextDecoder().decode(buffer);
-  const tree = fromMarkdown(source, {
+  const markup = new TextDecoder().decode(buffer);
+  const originalTree = fromMarkdown(markup, {
     extensions: [gfm()],
     mdastExtensions: [gfmFromMarkdown()]
   });
+  const tree = structuredClone(originalTree);
 
   removePosition(tree, { force: true });
 
