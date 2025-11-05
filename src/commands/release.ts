@@ -7,7 +7,7 @@ import { UNRELEASED_IDENTIFIER } from '../constants.js';
 import { isDefinition, isHeading } from '../identity.js';
 import { hasDefinition, hasDepthTwoHeading } from '../tree-contains.js';
 import type { ChangeType } from '../types.js';
-import { getDate, isVersionString } from '../util.js';
+import { getDate, getRepositoryVersionCompareUrl, isVersionString } from '../util.js';
 import { hasUnreleasedHeading } from './unreleased.js';
 import hostedGitInfo from 'hosted-git-info';
 import type { Definition, Root } from 'mdast';
@@ -101,11 +101,10 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
       normalizeIdentifier(node.identifier) === normalizeIdentifier(UNRELEASED_IDENTIFIER)
     ) {
       node.identifier = version;
-      node.label = version;
 
       // TODO: This URL works with GitHub and redirects to the correct URL for GitLab.
       //       Look into this for BitBucket and possibly use the redirect syntax for GitLab.
-      node.url = `${repository}/compare/v${pkg.version}...v${version}`;
+      node.url = getRepositoryVersionCompareUrl(repository, pkg.version!, version);
     }
 
     return [node];

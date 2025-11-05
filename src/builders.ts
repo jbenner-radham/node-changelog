@@ -1,5 +1,5 @@
 import { UNRELEASED_IDENTIFIER } from './constants.js';
-import { getDate } from './util.js';
+import { getDate, getRepositoryTaggedReleaseUrl, getRepositoryVersionCompareUrl } from './util.js';
 import type { Definition, Heading, List } from 'mdast';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
 import { u } from 'unist-builder';
@@ -32,10 +32,9 @@ export function buildUnreleasedDefinition({ from, repository }: {
   from: string;
   repository: string;
 }): Definition {
-  // TODO: Look into if this URL syntax works for BitBucket and GitLab.
   return u('definition', {
     identifier: normalizeIdentifier(UNRELEASED_IDENTIFIER),
-    url: `${repository}/compare/v${from}...HEAD`
+    url: getRepositoryVersionCompareUrl(repository, from, 'HEAD')
   });
 }
 
@@ -58,7 +57,7 @@ export function buildVersionDefinition({ from, to, repository }: {
   return u('definition', {
     identifier: to,
     url: from && from !== to
-      ? `${repository}/compare/v${from}...v${to}`
-      : `${repository}/releases/tag/v${to}`
+      ? getRepositoryVersionCompareUrl(repository, from, to)
+      : getRepositoryTaggedReleaseUrl(repository, to)
   });
 }
