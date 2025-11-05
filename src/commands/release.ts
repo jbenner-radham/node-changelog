@@ -7,8 +7,9 @@ import { UNRELEASED_IDENTIFIER } from '../constants.js';
 import { isDefinition, isHeading, isText } from '../identity.js';
 import { hasDefinition, hasDepthTwoHeading } from '../tree-contains.js';
 import type { ChangeType } from '../types.js';
-import { getDate, getNormalizedRepository, isVersionString } from '../util.js';
+import { getDate, isVersionString } from '../util.js';
 import { hasUnreleasedHeading } from './unreleased.js';
+import hostedGitInfo from 'hosted-git-info';
 import type { Definition, Root, Text } from 'mdast';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
 import type { PackageJson } from 'type-fest';
@@ -21,7 +22,7 @@ export function withRelease(tree: Root, { changeTypes, pkg, version }: {
   pkg: PackageJson;
   version: string;
 }): Root {
-  const repository = getNormalizedRepository(pkg.repository!);
+  const repository = hostedGitInfo.fromManifest(pkg).browse();
   const clonedTree = structuredClone(tree);
 
   if (!hasDefinition(clonedTree) && !hasDepthTwoHeading(clonedTree)) {
@@ -84,7 +85,7 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
   pkg: PackageJson;
   version: string;
 }): Root {
-  const repository = getNormalizedRepository(pkg.repository!);
+  const repository = hostedGitInfo.fromManifest(pkg).browse();
   const newTree = flatMap(tree, node => {
     if (isHeading(node) && node.depth === 2) {
       const text = select<Text>(`text[value="${UNRELEASED_IDENTIFIER}"]`, node);
