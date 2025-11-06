@@ -2,13 +2,13 @@ import {
   buildChangeTypeSection,
   buildLinkedVersionHeadingWithDate,
   buildVersionDefinition
-} from '../builders.js';
-import { UNRELEASED_IDENTIFIER } from '../constants.js';
-import { isDefinition, isHeading } from '../identity.js';
-import { hasDefinition, hasDepthTwoHeading } from '../tree-contains.js';
-import type { ChangeType } from '../types.js';
-import { getDate, getRepositoryVersionCompareUrl, isVersionString } from '../util.js';
-import { hasUnreleasedHeading } from './unreleased.js';
+} from '~/builders.js';
+import { hasUnreleasedHeading } from '~/commands/unreleased.js';
+import { UNRELEASED_IDENTIFIER } from '~/constants.js';
+import { isDefinition, isHeading } from '~/identity.js';
+import { hasDefinition, hasDepthTwoHeading } from '~/tree-contains.js';
+import type { ChangeType } from '~/types.js';
+import { getDate, getRepositoryVersionCompareUrl, isVersionString } from '~/util.js';
 import hostedGitInfo from 'hosted-git-info';
 import type { Definition, Root } from 'mdast';
 import { toString } from 'mdast-util-to-string';

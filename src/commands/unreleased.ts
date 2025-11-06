@@ -2,11 +2,11 @@ import {
   buildChangeTypeSection,
   buildUnreleasedDefinition,
   buildUnreleasedHeading
-} from '../builders.js';
-import { CHANGE_TYPES, UNRELEASED_IDENTIFIER } from '../constants.js';
-import { isDefinition, isHeading } from '../identity.js';
-import type { ChangeType } from '../types.js';
-import { isVersionString } from '../util.js';
+} from '~/builders.js';
+import { CHANGE_TYPES, UNRELEASED_IDENTIFIER } from '~/constants.js';
+import { isDefinition, isHeading } from '~/identity.js';
+import type { ChangeType } from '~/types.js';
+import { isVersionString } from '~/util.js';
 import hostedGitInfo from 'hosted-git-info';
 import type { Node, Nodes, Root } from 'mdast';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
