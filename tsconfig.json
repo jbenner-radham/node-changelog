@@ -5,6 +5,12 @@
     "rootDir": "./src",
     "outDir": "./dist/types",
 
+    // Path Alias
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    },
+
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "ESNext",
