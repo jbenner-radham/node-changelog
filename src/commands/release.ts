@@ -86,6 +86,7 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
   pkg: PackageJson;
   version: string;
 }): Root {
+  let foundVersionDefinition = false;
   const repository = hostedGitInfo.fromManifest(pkg).browse();
   const newTree = flatMap(tree, node => {
     if (isHeading(node) && node.depth === 2 && toString(node) === UNRELEASED_IDENTIFIER) {
@@ -100,11 +101,23 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
       isDefinition(node) &&
       normalizeIdentifier(node.identifier) === normalizeIdentifier(UNRELEASED_IDENTIFIER)
     ) {
+      foundVersionDefinition = true;
       node.identifier = version;
 
       // TODO: This URL works with GitHub and redirects to the correct URL for GitLab.
       //       Look into this for BitBucket and possibly use the redirect syntax for GitLab.
       node.url = getRepositoryVersionCompareUrl(repository, pkg.version!, version);
+    } else if (
+      !foundVersionDefinition &&
+      isDefinition(node) &&
+      isVersionString(node.identifier)
+    ) {
+      foundVersionDefinition = true;
+
+      return [
+        buildVersionDefinition({ from: pkg.version!, to: version, repository }),
+        node
+      ];
     }
 
     return [node];
