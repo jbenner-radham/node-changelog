@@ -39,8 +39,8 @@ importers:
         specifier: ^14.0.0
         version: 14.0.0
       meowtastic:
-        specifier: ^0.6.0
-        version: 0.6.0
+        specifier: ^0.7.1
+        version: 0.7.1
       micromark-extension-gfm:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1446,8 +1446,8 @@ packages:
     resolution: {integrity: sha512-uGWkjZqOkDFD6bVrr9hoDulH9Tnx0SdiUXWTyd08IkbGk3CE6zdFLS8ke5s/fWFMPjj/isMIjJW1eAUE8yqVvw==}
     engines: {node: '>=22'}
 
-  meowtastic@0.6.0:
-    resolution: {integrity: sha512-hOcsI2JU0gVfLXBeyI0BFECTlQYmG7NQG6/AK7C/nIamEJYxmKFoih1zD3pmlbQvjJ4hO1V5sEQczPZcUl51Xw==}
+  meowtastic@0.7.1:
+    resolution: {integrity: sha512-mvaLvD0jW8x7saqg4z5xkeylJ+kB20vyTLANt//uZg4jndi0cDudstmvON6KmsmD1ynyWt4yRsCfB20MZoglTQ==}
     engines: {node: '>=22'}
 
   merge2@1.4.1:
@@ -3377,7 +3377,7 @@ snapshots:
       is-plain-obj: 4.1.0
       read-package-up: 11.0.0
 
-  meowtastic@0.6.0:
+  meowtastic@0.7.1:
     dependencies:
       chalk-pipe: 6.2.0
       decamelize: 6.0.1
