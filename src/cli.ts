@@ -25,15 +25,25 @@ import { removePosition } from 'unist-util-remove-position';
 
 const cli = meow(
   ...getHelpTextAndOptions({
-    arguments: [
-      { name: 'init | release | unreleased', isRequired: true },
-      { name: 'changelog' }
-    ],
+    commands: {
+      init: {
+        arguments: [{ name: 'changelog' }],
+        description: 'Initialize a new changelog.'
+      },
+      release: {
+        arguments: [{ name: 'changelog' }],
+        description: 'Create a new release or promote an unreleased version.'
+      },
+      unreleased: {
+        arguments: [{ name: 'changelog' }],
+        description: 'Add an unreleased section to the changelog.'
+      }
+    },
     flags: {
       bulletListMarker: {
         choices: ['*', '+', '-'],
         description:
-          'Use this marker for bullet (unordered) lists (%CHOICES_OR%). Defaults to %DEFAULT%.',
+          'Use this marker for bullet lists (%CHOICES_OR%). Defaults to %DEFAULT%.',
         default: '-',
         shortFlag: 'b',
         type: 'string'
