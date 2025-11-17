@@ -162,3 +162,5 @@
 // console.debug(normalizeIdentifier('Unreleased'));
 
 // console.debug(process.argv)
+
+export default function index() {}

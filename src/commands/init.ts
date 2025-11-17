@@ -28,7 +28,7 @@ export function getBase(): Root {
 export function getBaseWithUnreleasedSection(): Root {
   const tree = getBase();
 
-  tree.children.push(...[
+  tree.children.push(
     u('heading', { depth: 2 as const }, [
       u('text', 'Unreleased')
     ]),
@@ -42,7 +42,7 @@ export function getBaseWithUnreleasedSection(): Root {
         ])
       ])
     ])
-  ]);
+  );
 
   return tree;
 }

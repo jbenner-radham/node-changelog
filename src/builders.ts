@@ -1,5 +1,9 @@
 import { UNRELEASED_IDENTIFIER } from '~/constants.js';
-import { getDate, getRepositoryTaggedReleaseUrl, getRepositoryVersionCompareUrl } from '~/util.js';
+import {
+  getDate,
+  getRepositoryTaggedReleaseUrl,
+  getRepositoryVersionCompareUrl
+} from '~/utilities.js';
 import type { Definition, Heading, List } from 'mdast';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
 import { u } from 'unist-builder';

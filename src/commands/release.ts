@@ -8,7 +8,7 @@ import { UNRELEASED_IDENTIFIER } from '~/constants.js';
 import { isDefinition, isHeading } from '~/identity.js';
 import { hasDefinition, hasDepthTwoHeading } from '~/tree-contains.js';
 import type { ChangeType } from '~/types.js';
-import { getDate, getRepositoryVersionCompareUrl, isVersionString } from '~/util.js';
+import { getDate, getRepositoryVersionCompareUrl, isVersionString } from '~/utilities.js';
 import hostedGitInfo from 'hosted-git-info';
 import type { Definition, Root } from 'mdast';
 import { toString } from 'mdast-util-to-string';
@@ -27,11 +27,11 @@ export function withRelease(tree: Root, { changeTypes, pkg, version }: {
   const clonedTree = structuredClone(tree);
 
   if (!hasDefinition(clonedTree) && !hasDepthTwoHeading(clonedTree)) {
-    clonedTree.children.push(...[
+    clonedTree.children.push(
       buildLinkedVersionHeadingWithDate(version),
       ...changeTypes.flatMap(buildChangeTypeSection),
       buildVersionDefinition({ to: version, repository })
-    ]);
+    );
 
     return clonedTree;
   }

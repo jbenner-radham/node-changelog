@@ -1,6 +1,8 @@
 // Based upon: https://tinyurl.com/unist-utils-core-select
 // SPDX-License-Identifier: MIT
 
+/* eslint-disable unicorn/prevent-abbreviations */
+
 declare module 'unist-util-select' {
   import type { Node } from 'unist';
   import unistUtilSelect from 'unist-util-select';

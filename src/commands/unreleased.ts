@@ -6,7 +6,7 @@ import {
 import { CHANGE_TYPES, UNRELEASED_IDENTIFIER } from '~/constants.js';
 import { isDefinition, isHeading } from '~/identity.js';
 import type { ChangeType } from '~/types.js';
-import { isVersionString } from '~/util.js';
+import { isVersionString } from '~/utilities.js';
 import hostedGitInfo from 'hosted-git-info';
 import type { Node, Nodes, Root } from 'mdast';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
@@ -69,10 +69,10 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
   });
 
   if (!hasUnreleasedHeading(newTree)) {
-    newTree.children.push(...[
+    newTree.children.push(
       buildUnreleasedHeading(),
       ...changeTypes.flatMap(buildChangeTypeSection)
-    ]);
+    );
   }
 
   if (hasUnreleasedHeadingLink(tree) && !hasUnreleasedDefinition(newTree)) {

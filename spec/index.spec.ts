@@ -1,8 +1,8 @@
-import lib from '../src/index.js';
+import library from '../src/index.js';
 import { describe, expect, it } from 'vitest';
 
-describe.skip('lib', () => {
+describe.skip('library', () => {
   it('is a function', () => {
-    expect(lib).toBeTypeOf('function');
+    expect(library).toBeTypeOf('function');
   });
 });

@@ -5,7 +5,7 @@ import { withRelease } from './commands/release.js';
 import { hasUnreleasedHeading, withUnreleasedSection } from './commands/unreleased.js';
 import { CHANGE_TYPES } from './constants.js';
 import type { ChangeType } from './types.js';
-import { readPackage } from './util.js';
+import { readPackage } from './utilities.js';
 import { checkbox, confirm, select } from '@inquirer/prompts';
 import { parse as parseVersion } from '@radham/semver';
 import logSymbols from 'log-symbols';

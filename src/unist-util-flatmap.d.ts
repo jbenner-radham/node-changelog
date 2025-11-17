@@ -1,3 +1,5 @@
+/* eslint-disable unicorn/prevent-abbreviations */
+
 declare module 'unist-util-flatmap' {
   import type { Node, Nodes } from 'unist';
 
