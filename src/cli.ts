@@ -174,16 +174,16 @@ if (args.includes('INIT')) {
     message: 'What version are you releasing?',
     choices: [
       {
-        description: 'Patch',
-        value: candidates.patch
+        description: 'Major',
+        value: candidates.major
       },
       {
         description: 'Minor',
         value: candidates.minor
       },
       {
-        description: 'Major',
-        value: candidates.major
+        description: 'Patch',
+        value: candidates.patch
       }
     ]
   });
