@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
-const gitignorePath = path.resolve(dirname, '.gitignore');
+const gitignorePath = path.join(dirname, '.gitignore');
 
 export default defineConfig([
   includeIgnoreFile(gitignorePath),
