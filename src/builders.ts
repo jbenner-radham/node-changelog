@@ -14,7 +14,7 @@ export function buildChangeTypeSection(changeType: string): [Heading, List] {
       u('text', changeType)
     ]),
     u('list', [
-      u('listItem', { checked: null, spread: false }, [
+      u('listItem', [
         u('paragraph', [
           u('text', '...')
         ])

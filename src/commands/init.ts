@@ -36,7 +36,7 @@ export function getBaseWithUnreleasedSection(): Root {
       u('text', 'Added')
     ]),
     u('list', [
-      u('listItem', { checked: null, spread: false }, [
+      u('listItem', [
         u('paragraph', [
           u('text', 'Initial release.')
         ])
