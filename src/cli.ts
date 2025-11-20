@@ -20,6 +20,7 @@ import { existsSync as fileExistsSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { isDeepStrictEqual } from 'node:util';
 import type { PackageJson } from 'type-fest';
 import { removePosition } from 'unist-util-remove-position';
 
@@ -203,6 +204,11 @@ if (args.includes('INIT')) {
     ? []
     : await checkbox<ChangeType>({ message: 'Include which change types?', choices: CHANGE_TYPES });
   const newTree = withUnreleasedSection(tree, { changeTypes, pkg });
+
+  if (isDeepStrictEqual(tree, newTree)) {
+    console.error(logSymbols.error, 'No changes generated. Skipping update.');
+    process.exit(1);
+  }
 
   await promptThenWriteChangelog({ filepath, tree: newTree });
 }
