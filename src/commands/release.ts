@@ -40,21 +40,6 @@ export function withRelease(tree: Root, { changeTypes, pkg, version }: {
     return withUnreleasedAsRelease(clonedTree, { pkg, version });
   }
 
-  // const hasVersionHeadings = Boolean(
-  //   selectAll('heading[depth="2"]', tree)
-  //     .filter(node => {
-  //       const [child] = (node as Heading).children ?? [];
-  //
-  //       return child?.type === 'linkReference' && /^\d+\.\d+\.\d+$/.test(child?.identifier);
-  //     }).length
-  // );
-  // const hasVersionDefinitions = Boolean(
-  //   selectAll('definition', tree)
-  //     .filter(definition =>
-  //       /^\d+\.\d+\.\d+$/.test((definition as Definition).identifier)
-  //     ).length
-  // );
-
   let foundReleaseHeading = false;
   let foundVersionDefinition = false;
 
