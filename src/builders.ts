@@ -13,7 +13,7 @@ export function buildChangeTypeSection(changeType: string): [Heading, List] {
     u('heading', { depth: 3 as const }, [
       u('text', changeType)
     ]),
-    u('list', { ordered: false, start: null, spread: false }, [
+    u('list', [
       u('listItem', { checked: null, spread: false }, [
         u('paragraph', [
           u('text', '...')
