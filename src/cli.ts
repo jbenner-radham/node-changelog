@@ -20,7 +20,7 @@ import { existsSync as fileExistsSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
-import { isDeepStrictEqual } from 'node:util';
+import { isDeepStrictEqual, styleText } from 'node:util';
 import type { PackageJson } from 'type-fest';
 import { removePosition } from 'unist-util-remove-position';
 
@@ -170,20 +170,38 @@ if (args.includes('INIT')) {
 
   ensurePackageHasRequiredProperties(pkg);
 
+  const emphasizeVersionChangeType = (
+    version: string, changeType: 'major' | 'minor' | 'patch'
+  ): string => {
+    const { major, minor, patch } = parseVersion(version);
+
+    switch (changeType) {
+      case 'major':
+        return `${styleText('bold', major.toString())}.0.0`;
+      case 'minor':
+        return `${major}.${styleText('bold', minor.toString())}.0`;
+      case 'patch':
+        return `${major}.${minor}.${styleText('bold', patch.toString())}`;
+    }
+  };
+
   const candidates = getReleaseVersionCandidates(pkg);
   const version = await select({
-    message: 'What version are you releasing?',
+    message: `What version are you releasing? (Current: ${pkg.version})`,
     choices: [
       {
         description: 'Major',
+        name: emphasizeVersionChangeType(candidates.major, 'major'),
         value: candidates.major
       },
       {
         description: 'Minor',
+        name: emphasizeVersionChangeType(candidates.minor, 'minor'),
         value: candidates.minor
       },
       {
         description: 'Patch',
+        name: emphasizeVersionChangeType(candidates.patch, 'patch'),
         value: candidates.patch
       }
     ]
