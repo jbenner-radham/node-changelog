@@ -28,12 +28,13 @@ $ changelog --help
     $ changelog [OPTIONS] <COMMAND>
 
   Options
-    --bullet-list-marker, -b  Use this marker for bullet lists ("*", "+", or "-").
-                              Defaults to "-".
-    --heading-style, -H       Use this style of headings ("atx" or "setext").
-                              Defaults to "setext".
-    --help, -h                Display this message.
-    --version, -v             Display the application version.
+    --bullet-list-marker, -b    Use this marker for bullet lists ("*", "+", or
+                                "-"). Defaults to "-".
+    --heading-style, -H         Use this style of headings ("atx" or "setext").
+                                Defaults to "setext".
+    --help, -h                  Display this message.
+    --separate-definitions, -s  Separate definitions with blank lines.
+    --version, -v               Display the application version.
 
   Commands
     init [CHANGELOG]        Initialize a new changelog.

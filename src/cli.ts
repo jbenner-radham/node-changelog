@@ -56,6 +56,12 @@ const cli = meow(
         default: 'setext',
         shortFlag: 'H',
         type: 'string'
+      },
+      separateDefinitions: {
+        description: 'Separate definitions with blank lines.',
+        default: false,
+        shortFlag: 's',
+        type: 'boolean'
       }
     },
     importMeta: import.meta
@@ -118,7 +124,7 @@ const promptThenWriteChangelog = async ({ filepath, tree }: { filepath: string; 
     bullet,
     extensions: [gfmToMarkdown()],
     setext,
-    tightDefinitions: true
+    tightDefinitions: !cli.flags.separateDefinitions
   });
 
   if (writeTo === 'stdout') {
