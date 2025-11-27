@@ -74,7 +74,7 @@
     "@types/mdast": "^4.0.4",
     "@types/node": "^22.18.8",
     "@types/unist": "^3.0.3",
-    "@vitest/coverage-v8": "^4.0.10",
+    "@vitest/coverage-v8": "^4.0.14",
     "duo-build": "^0.2.1",
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
@@ -86,7 +86,7 @@
     "type-fest": "^5.2.0",
     "typescript": "^5.9.3",
     "unist-util-inspect": "^8.1.0",
-    "vitest": "^4.0.10"
+    "vitest": "^4.0.14"
   },
   "packageManager": "pnpm@10.22.0",
   "engines": {
