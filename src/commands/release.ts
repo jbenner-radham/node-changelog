@@ -23,7 +23,7 @@ export function withRelease(tree: Root, { changeTypes, pkg, version }: {
   pkg: PackageJson;
   version: string;
 }): Root {
-  const repository = hostedGitInfo.fromManifest(pkg).browse();
+  const repository: string = hostedGitInfo.fromManifest(pkg).browse();
   const clonedTree = structuredClone(tree);
 
   if (!hasDefinition(clonedTree) && !hasDepthTwoHeading(clonedTree)) {

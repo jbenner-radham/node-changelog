@@ -18,7 +18,7 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
   changeTypes?: ChangeType[];
   pkg: PackageJson;
 }): Root {
-  const repository = hostedGitInfo.fromManifest(pkg).browse();
+  const repository: string = hostedGitInfo.fromManifest(pkg).browse();
   const hasPreexistingUnreleasedHeading = hasUnreleasedHeading(tree);
 
   let depthTwoHeadingFound = false;
