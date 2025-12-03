@@ -39,8 +39,8 @@ importers:
         specifier: ^14.0.0
         version: 14.0.0
       meowtastic:
-        specifier: ^0.7.1
-        version: 0.7.1
+        specifier: ^0.7.2
+        version: 0.7.2
       micromark-extension-gfm:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1668,8 +1668,8 @@ packages:
     resolution: {integrity: sha512-uGWkjZqOkDFD6bVrr9hoDulH9Tnx0SdiUXWTyd08IkbGk3CE6zdFLS8ke5s/fWFMPjj/isMIjJW1eAUE8yqVvw==}
     engines: {node: '>=22'}
 
-  meowtastic@0.7.1:
-    resolution: {integrity: sha512-mvaLvD0jW8x7saqg4z5xkeylJ+kB20vyTLANt//uZg4jndi0cDudstmvON6KmsmD1ynyWt4yRsCfB20MZoglTQ==}
+  meowtastic@0.7.2:
+    resolution: {integrity: sha512-zBUUAyKKaOh22UqXzY2XFMoOPKekJhXl5VCG+0lsFc94q9Xi1HZivO9VzIFdrnbA8pdeenzBX+onud2iuxZi7w==}
     engines: {node: '>=22'}
 
   merge2@1.4.1:
@@ -1812,6 +1812,10 @@ packages:
     resolution: {integrity: sha512-V6gygoYb/5EmNI+MEGrWkC+e6+Rr7mTmfHrxDbLzxQogBkgzo76rkok0Am6thgSF7Mv2nLOajAJj5vDJZEFn7g==}
     engines: {node: ^16.14.0 || >=18.0.0}
 
+  normalize-package-data@8.0.0:
+    resolution: {integrity: sha512-RWk+PI433eESQ7ounYxIp67CYuVsS1uYSonX3kA6ps/3LWfjVQa/ptEg6Y3T6uAMq1mWpX9PQ+qx+QaHpsc7gQ==}
+    engines: {node: ^20.17.0 || >=22.9.0}
+
   npm-run-path@6.0.0:
     resolution: {integrity: sha512-9qny7Z9DsQU8Ou39ERsPU4OZQlSTP47ShQzuKZ6PRXpYLtIFgl/DEBYEXKlvcEa+9tHVcK8CF81Y2V72qaZhWA==}
     engines: {node: '>=18'}
@@ -1918,6 +1922,14 @@ packages:
   read-package-up@11.0.0:
     resolution: {integrity: sha512-MbgfoNPANMdb4oRBNg5eqLbB2t2r+o5Ua1pNt8BqGp4I0FJZhuVSOj3PaBPni4azWuSzEdNn2evevzVmEk1ohQ==}
     engines: {node: '>=18'}
+
+  read-package-up@12.0.0:
+    resolution: {integrity: sha512-Q5hMVBYur/eQNWDdbF4/Wqqr9Bjvtrw2kjGxxBbKLbx8bVCL8gcArjTy8zDUuLGQicftpMuU0riQNcAsbtOVsw==}
+    engines: {node: '>=20'}
+
+  read-pkg@10.0.0:
+    resolution: {integrity: sha512-A70UlgfNdKI5NSvTTfHzLQj7NJRpJ4mT5tGafkllJ4wh71oYuGm/pzphHcmW4s35iox56KSK721AihodoXSc/A==}
+    engines: {node: '>=20'}
 
   read-pkg@9.0.1:
     resolution: {integrity: sha512-9viLL4/n1BJUCT1NXVTdS1jtm80yDEgR5T4yCelII49Mbj0v1rZdKqj7zCiYdbB0CuCgdrvHcNogAKTFPBocFA==}
@@ -3782,13 +3794,13 @@ snapshots:
       is-plain-obj: 4.1.0
       read-package-up: 11.0.0
 
-  meowtastic@0.7.1:
+  meowtastic@0.7.2:
     dependencies:
       chalk-pipe: 6.2.0
       decamelize: 6.0.1
       decamelize-keys: 2.0.1
       is-plain-obj: 4.1.0
-      read-package-up: 11.0.0
+      read-package-up: 12.0.0
 
   merge2@1.4.1: {}
 
@@ -4029,6 +4041,12 @@ snapshots:
       semver: 7.7.3
       validate-npm-package-license: 3.0.4
 
+  normalize-package-data@8.0.0:
+    dependencies:
+      hosted-git-info: 9.0.2
+      semver: 7.7.3
+      validate-npm-package-license: 3.0.4
+
   npm-run-path@6.0.0:
     dependencies:
       path-key: 4.0.0
@@ -4121,6 +4139,20 @@ snapshots:
       find-up-simple: 1.0.1
       read-pkg: 9.0.1
       type-fest: 4.41.0
+
+  read-package-up@12.0.0:
+    dependencies:
+      find-up-simple: 1.0.1
+      read-pkg: 10.0.0
+      type-fest: 5.2.0
+
+  read-pkg@10.0.0:
+    dependencies:
+      '@types/normalize-package-data': 2.4.4
+      normalize-package-data: 8.0.0
+      parse-json: 8.3.0
+      type-fest: 5.2.0
+      unicorn-magic: 0.3.0
 
   read-pkg@9.0.1:
     dependencies:
