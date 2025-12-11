@@ -25,7 +25,7 @@ export default function release({
   getMarkdown: (tree: Root) => string;
   pkg: PackageJson;
   tree: Root;
-}) {
+}): void {
   const candidates = getReleaseVersionCandidates(pkg);
   const releaseType = args.find(argument => ['major', 'minor', 'patch'].includes(argument))!;
   const version = candidates[releaseType as 'major' | 'minor' | 'patch'];

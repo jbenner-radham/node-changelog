@@ -5,8 +5,8 @@ import type { ChangeType } from './types.js';
 import { capitalize, readPackage } from './utilities.js';
 import { checkbox, confirm, select } from '@inquirer/prompts';
 import { parse as parseVersion } from '@radham/semver';
+import create from '~/commands/create.js';
 import release from '~/commands/release.js';
-import { getBaseWithUnreleasedSection } from '~/operations/init.js';
 import { withRelease } from '~/operations/release.js';
 import { hasUnreleasedHeading, withUnreleasedSection } from '~/operations/unreleased.js';
 import logSymbols from 'log-symbols';
@@ -209,9 +209,9 @@ if (!args.length) {
 }
 
 if (args.includes('create')) {
-  const tree = getBaseWithUnreleasedSection();
+  create({ changelogPath, cli, getMarkdown });
 
-  await promptThenWriteChangelog({ filepath, tree });
+  process.exit(0);
 } else if (args.some(argument => ['major', 'minor', 'patch'].includes(argument))) {
   const { pkg, tree } = await getContext();
 
