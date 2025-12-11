@@ -11,8 +11,8 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 22.x
           - 24.x
+          - latest
     steps:
       - uses: actions/checkout@v5
       - name: Use pnpm

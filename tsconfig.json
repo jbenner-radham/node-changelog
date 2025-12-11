@@ -15,7 +15,7 @@
     // See also https://aka.ms/tsconfig/module
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "target": "ES2023",
+    "target": "ESNext",
     "types": ["node"],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
