@@ -42,15 +42,15 @@ $ changelog --help
     --write, -w                 Write to the changelog file instead of stdout.
 
   Commands
-    create [CHANGELOG]      Create a new changelog.
-    major [CHANGELOG]       Create a new major release or promote an unreleased
-                            section to one.
-    minor [CHANGELOG]       Create a new minor release or promote an unreleased
-                            section to one.
-    patch [CHANGELOG]       Create a new patch release or promote an unreleased
-                            section to one.
-    release [CHANGELOG]     Create a new release or promote an unreleased version.
-    unreleased [CHANGELOG]  Add an unreleased section to the changelog.
+    create [CHANGELOG]   Create a new changelog.
+    draft [CHANGELOG]    Add an unreleased section to the changelog.
+    major [CHANGELOG]    Create a new major release or promote an unreleased
+                         section to one.
+    minor [CHANGELOG]    Create a new minor release or promote an unreleased
+                         section to one.
+    patch [CHANGELOG]    Create a new patch release or promote an unreleased
+                         section to one.
+    release [CHANGELOG]  Create a new release or promote an unreleased version.
 ```
 
 License

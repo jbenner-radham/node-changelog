@@ -57,7 +57,7 @@ const cli = meow(
         arguments: [{ name: 'changelog' }],
         description: 'Create a new patch release or promote an unreleased section to one.'
       },
-      unreleased: {
+      draft: {
         arguments: [{ name: 'changelog' }],
         description: 'Add an unreleased section to the changelog.'
       }
@@ -275,7 +275,7 @@ if (args.includes('create')) {
 
   // console.dir(newTree, { depth: undefined });
   await promptThenWriteChangelog({ filepath, tree: newTree });
-} else if (args.includes('unreleased')) {
+} else if (args.includes('draft')) {
   const { pkg, tree } = await getContext();
 
   ensurePackageHasRequiredProperties(pkg);
