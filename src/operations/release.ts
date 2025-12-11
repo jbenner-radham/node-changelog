@@ -3,9 +3,9 @@ import {
   buildLinkedVersionHeadingWithDate,
   buildVersionDefinition
 } from '~/builders.js';
-import { hasUnreleasedHeading } from '~/commands/unreleased.js';
 import { UNRELEASED_IDENTIFIER } from '~/constants.js';
 import { isDefinition, isHeading } from '~/identity.js';
+import { hasUnreleasedHeading } from '~/operations/unreleased.js';
 import { hasDefinition, hasDepthTwoHeading } from '~/tree-contains.js';
 import type { ChangeType } from '~/types.js';
 import { getDate, getRepositoryVersionCompareUrl, isVersionString } from '~/utilities.js';

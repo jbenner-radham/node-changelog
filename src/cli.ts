@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import { getBaseWithUnreleasedSection } from './commands/init.js';
-import { withRelease } from './commands/release.js';
-import { hasUnreleasedHeading, withUnreleasedSection } from './commands/unreleased.js';
 import { CHANGE_TYPES } from './constants.js';
 import type { ChangeType } from './types.js';
 import { capitalize, readPackage } from './utilities.js';
 import { checkbox, confirm, select } from '@inquirer/prompts';
 import { parse as parseVersion } from '@radham/semver';
+import { getBaseWithUnreleasedSection } from '~/operations/init.js';
+import { withRelease } from '~/operations/release.js';
+import { hasUnreleasedHeading, withUnreleasedSection } from '~/operations/unreleased.js';
 import logSymbols from 'log-symbols';
 import type { Root } from 'mdast';
 import { fromMarkdown } from 'mdast-util-from-markdown';
@@ -39,7 +39,7 @@ const cli = meow(
       //   description: 'Lint the changelog.'
       // },
 
-      // TODO: Change this command name to "interactive" or something and make it all encompassing.
+      // TODO: Change this command to "interactive" or something and make it all encompassing.
       release: {
         arguments: [{ name: 'changelog' }],
         description: 'Create a new release or promote an unreleased version.'
