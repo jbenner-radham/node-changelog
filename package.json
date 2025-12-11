@@ -59,6 +59,7 @@
     "meowtastic": "^0.7.2",
     "micromark-extension-gfm": "^3.0.0",
     "micromark-util-normalize-identifier": "^2.0.1",
+    "terminal-link": "^5.0.0",
     "unist-builder": "^4.0.0",
     "unist-util-flatmap": "^1.0.0",
     "unist-util-remove-position": "^5.0.0",
