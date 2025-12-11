@@ -5,7 +5,7 @@ import { withRelease } from './commands/release.js';
 import { hasUnreleasedHeading, withUnreleasedSection } from './commands/unreleased.js';
 import { CHANGE_TYPES } from './constants.js';
 import type { ChangeType } from './types.js';
-import { readPackage } from './utilities.js';
+import { capitalize, readPackage } from './utilities.js';
 import { checkbox, confirm, select } from '@inquirer/prompts';
 import { parse as parseVersion } from '@radham/semver';
 import logSymbols from 'log-symbols';
@@ -21,6 +21,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { isDeepStrictEqual, styleText } from 'node:util';
+import terminalLink from 'terminal-link';
 import type { PackageJson } from 'type-fest';
 import { removePosition } from 'unist-util-remove-position';
 
@@ -35,11 +36,26 @@ const cli = meow(
         arguments: [{ name: 'changelog' }],
         description: 'Create a new release or promote an unreleased version.'
       },
+      major: {
+        arguments: [{ name: 'changelog' }],
+        description: 'Create a new major release or promote an unreleased section to one.'
+      },
+      minor: {
+        arguments: [{ name: 'changelog' }],
+        description: 'Create a new minor release or promote an unreleased section to one.'
+      },
+      patch: {
+        arguments: [{ name: 'changelog' }],
+        description: 'Create a new patch release or promote an unreleased section to one.'
+      },
       unreleased: {
         arguments: [{ name: 'changelog' }],
         description: 'Add an unreleased section to the changelog.'
       }
     },
+    description: `A tool for managing ${
+      terminalLink('Keep a Changelog', 'https://keepachangelog.com/', { fallback: (text, url) => `${text} (${url})` })
+    } changelogs.`,
     flags: {
       bulletListMarker: {
         choices: ['*', '+', '-'],
@@ -47,6 +63,15 @@ const cli = meow(
           'Use this marker for bullet lists (%CHOICES_OR%). Defaults to %DEFAULT%.',
         default: '-',
         shortFlag: 'b',
+        type: 'string'
+      },
+      changeType: {
+        choices: ['added', 'changed', 'deprecated', 'fixed', 'removed', 'security'],
+        description: 'Create a section stub for this change type (%CHOICES_OR%). Can be specified' +
+          ' multiple times.',
+        default: [],
+        isMultiple: true,
+        shortFlag: 'c',
         type: 'string'
       },
       headingStyle: {
@@ -62,15 +87,22 @@ const cli = meow(
         default: false,
         shortFlag: 's',
         type: 'boolean'
+      },
+      write: {
+        description: 'Write to the changelog file instead of stdout.',
+        default: false,
+        shortFlag: 'w',
+        type: 'boolean'
       }
     },
     importMeta: import.meta
   })
 );
 
-const args = cli.input.map(value => value.toUpperCase());
+const args = cli.input.map(value => value.toLowerCase());
 const bullet = cli.flags.bulletListMarker as '*' | '+' | '-';
 const changelogPath = cli.input.length > 1 ? cli.input.at(1)! : 'CHANGELOG.md';
+const changeTypes = (cli.flags.changeType as string[]).map(capitalize) as ChangeType[];
 const cwd = cli.input.length > 1 ? path.dirname(cli.input.at(1)!) : process.cwd();
 const filepath = path.relative(process.cwd(), changelogPath);
 const isTty = Boolean(process.stdout.isTTY);
@@ -109,6 +141,13 @@ const getContext = async () => {
 
   return { pkg, tree };
 };
+
+const getMarkdown = (tree: Root): string => toMarkdown(tree, {
+  bullet,
+  extensions: [gfmToMarkdown()],
+  setext,
+  tightDefinitions: !cli.flags.separateDefinitions
+});
 
 const promptThenWriteChangelog = async ({ filepath, tree }: { filepath: string; tree: Root }) => {
   /* eslint-disable @stylistic/indent */
@@ -159,11 +198,29 @@ if (!args.length) {
   cli.showHelp();
 }
 
-if (args.includes('INIT')) {
+if (args.includes('init')) {
   const tree = getBaseWithUnreleasedSection();
 
   await promptThenWriteChangelog({ filepath, tree });
-} else if (args.includes('RELEASE')) {
+} else if (args.some(argument => ['major', 'minor', 'patch'].includes(argument))) {
+  const { pkg, tree } = await getContext();
+
+  ensurePackageHasRequiredProperties(pkg);
+
+  const candidates = getReleaseVersionCandidates(pkg);
+  const releaseType = args.find(argument => ['major', 'minor', 'patch'].includes(argument))!;
+  const version = candidates[releaseType as 'major' | 'minor' | 'patch'];
+  const newTree = withRelease(tree, { changeTypes, pkg, version });
+  const markdown = getMarkdown(newTree);
+
+  if (cli.flags.write) {
+    await fs.writeFile(changelogPath, markdown);
+  } else {
+    console.log(markdown);
+  }
+
+  process.exit(0);
+} else if (args.includes('release')) {
   if (!isTty) {
     console.error(
       logSymbols.error,
@@ -219,7 +276,7 @@ if (args.includes('INIT')) {
 
   // console.dir(newTree, { depth: undefined });
   await promptThenWriteChangelog({ filepath, tree: newTree });
-} else if (args.includes('UNRELEASED')) {
+} else if (args.includes('unreleased')) {
   const { pkg, tree } = await getContext();
 
   ensurePackageHasRequiredProperties(pkg);
