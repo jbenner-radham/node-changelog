@@ -1,3 +1,4 @@
+import { parse as parseVersion } from '@radham/semver';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
@@ -18,6 +19,20 @@ export function getDate(): string {
   // const day = String(date.getDate()).padStart(2, '0');
   //
   // return `${year}-${month}-${day}`;
+}
+
+export function getReleaseVersionCandidates(pkg: PackageJson): {
+  major: string;
+  minor: string;
+  patch: string;
+} {
+  const version = parseVersion(pkg.version!);
+
+  return {
+    major: `${version.major + 1}.0.0`,
+    minor: `${version.major}.${version.minor + 1}.0`,
+    patch: `${version.major}.${version.minor}.${version.patch + 1}`
+  };
 }
 
 export function getRepositoryTaggedReleaseUrl(repository: string, version: string): string {

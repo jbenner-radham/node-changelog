@@ -5,6 +5,7 @@ import type { ChangeType } from './types.js';
 import { capitalize, readPackage } from './utilities.js';
 import { checkbox, confirm, select } from '@inquirer/prompts';
 import { parse as parseVersion } from '@radham/semver';
+import release from '~/commands/release.js';
 import { getBaseWithUnreleasedSection } from '~/operations/init.js';
 import { withRelease } from '~/operations/release.js';
 import { hasUnreleasedHeading, withUnreleasedSection } from '~/operations/unreleased.js';
@@ -192,6 +193,7 @@ const promptThenWriteChangelog = async ({ filepath, tree }: { filepath: string; 
   }
 };
 
+// TODO: Finish migrating to the version of this function in utilities.
 const getReleaseVersionCandidates = (pkg: PackageJson) => {
   const version = parseVersion(pkg.version!);
 
@@ -214,18 +216,7 @@ if (args.includes('init')) {
   const { pkg, tree } = await getContext();
 
   ensurePackageHasRequiredProperties(pkg);
-
-  const candidates = getReleaseVersionCandidates(pkg);
-  const releaseType = args.find(argument => ['major', 'minor', 'patch'].includes(argument))!;
-  const version = candidates[releaseType as 'major' | 'minor' | 'patch'];
-  const newTree = withRelease(tree, { changeTypes, pkg, version });
-  const markdown = getMarkdown(newTree);
-
-  if (cli.flags.write) {
-    await fs.writeFile(changelogPath, markdown);
-  } else {
-    console.log(markdown);
-  }
+  release({ args, changeTypes, changelogPath, cli, getMarkdown, pkg, tree });
 
   process.exit(0);
 } else if (args.includes('release')) {
