@@ -32,6 +32,14 @@ const cli = meow(
         arguments: [{ name: 'changelog' }],
         description: 'Initialize a new changelog.'
       },
+
+      // TODO: Create this command.
+      // lint: {
+      //   arguments: [{ name: 'changelog' }],
+      //   description: 'Lint the changelog.'
+      // },
+
+      // TODO: Change this command name to "interactive" or something and make it all encompassing.
       release: {
         arguments: [{ name: 'changelog' }],
         description: 'Create a new release or promote an unreleased version.'
