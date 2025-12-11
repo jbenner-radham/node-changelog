@@ -6,8 +6,9 @@ import { capitalize, readPackage } from './utilities.js';
 import { checkbox, confirm, select } from '@inquirer/prompts';
 import { parse as parseVersion } from '@radham/semver';
 import create from '~/commands/create.js';
+import draft from '~/commands/draft.js';
 import release from '~/commands/release.js';
-import { hasUnreleasedHeading, withUnreleasedSection } from '~/operations/draft.js';
+import { hasUnreleasedHeading } from '~/operations/draft.js';
 import { withRelease } from '~/operations/release.js';
 import logSymbols from 'log-symbols';
 import type { Root } from 'mdast';
@@ -212,6 +213,13 @@ if (args.includes('create')) {
   create({ changelogPath, cli, getMarkdown });
 
   process.exit(0);
+} else if (args.includes('draft')) {
+  const { pkg, tree } = await getContext();
+
+  ensurePackageHasRequiredProperties(pkg);
+  draft({ changeTypes, changelogPath, cli, getMarkdown, pkg, tree });
+
+  process.exit(0);
 } else if (args.some(argument => ['major', 'minor', 'patch'].includes(argument))) {
   const { pkg, tree } = await getContext();
 
@@ -275,33 +283,19 @@ if (args.includes('create')) {
 
   // console.dir(newTree, { depth: undefined });
   await promptThenWriteChangelog({ filepath, tree: newTree });
-} else if (args.includes('draft')) {
-  const { pkg, tree } = await getContext();
+} // else if (args.includes('draft')) {
 
-  ensurePackageHasRequiredProperties(pkg);
-
-  const newTree = withUnreleasedSection(tree, { changeTypes, pkg });
-  const markdown = getMarkdown(newTree);
-
-  if (cli.flags.write) {
-    await fs.writeFile(changelogPath, markdown);
-  } else {
-    console.log(markdown);
-  }
-
-  process.exit(0);
-
-  // const changeTypes = hasUnreleasedHeading(tree)
-  //   ? []
-  //   : await checkbox<ChangeType>({
-  //      message: 'Include which change types?', choices: CHANGE_TYPES
-  //     });
-  // const newTree = withUnreleasedSection(tree, { changeTypes, pkg });
-  //
-  // if (isDeepStrictEqual(tree, newTree)) {
-  //   console.error(logSymbols.error, 'No changes generated. Skipping update.');
-  //   process.exit(1);
-  // }
-  //
-  // await promptThenWriteChangelog({ filepath, tree: newTree });
-}
+// const changeTypes = hasUnreleasedHeading(tree)
+//   ? []
+//   : await checkbox<ChangeType>({
+//      message: 'Include which change types?', choices: CHANGE_TYPES
+//     });
+// const newTree = withUnreleasedSection(tree, { changeTypes, pkg });
+//
+// if (isDeepStrictEqual(tree, newTree)) {
+//   console.error(logSymbols.error, 'No changes generated. Skipping update.');
+//   process.exit(1);
+// }
+//
+// await promptThenWriteChangelog({ filepath, tree: newTree });
+// }
