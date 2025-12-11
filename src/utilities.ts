@@ -3,6 +3,10 @@ import path from 'node:path';
 import process from 'node:process';
 import type { PackageJson } from 'type-fest';
 
+export function capitalize<T extends string>(value: T): Capitalize<T> {
+  return (value.charAt(0).toUpperCase() + value.slice(1)) as Capitalize<T>;
+}
+
 export function getDate(): string {
   return new Date().toISOString()
     .split('T')
