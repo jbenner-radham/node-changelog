@@ -1,4 +1,4 @@
-import { getBaseWithUnreleasedSection } from '~/operations/init.js';
+import { getBaseWithUnreleasedSection } from '~/operations/create.js';
 import type { AnyFlags } from '~/types.js';
 import type { Root } from 'mdast';
 import type { Result } from 'meow';
