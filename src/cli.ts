@@ -29,9 +29,9 @@ import { removePosition } from 'unist-util-remove-position';
 const cli = meow(
   ...getHelpTextAndOptions({
     commands: {
-      init: {
+      create: {
         arguments: [{ name: 'changelog' }],
-        description: 'Initialize a new changelog.'
+        description: 'Create a new changelog.'
       },
 
       // TODO: Create this command.
@@ -208,7 +208,7 @@ if (!args.length) {
   cli.showHelp();
 }
 
-if (args.includes('init')) {
+if (args.includes('create')) {
   const tree = getBaseWithUnreleasedSection();
 
   await promptThenWriteChangelog({ filepath, tree });

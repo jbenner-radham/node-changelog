@@ -42,7 +42,7 @@ $ changelog --help
     --write, -w                 Write to the changelog file instead of stdout.
 
   Commands
-    init [CHANGELOG]        Initialize a new changelog.
+    create [CHANGELOG]      Create a new changelog.
     major [CHANGELOG]       Create a new major release or promote an unreleased
                             section to one.
     minor [CHANGELOG]       Create a new minor release or promote an unreleased
