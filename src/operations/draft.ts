@@ -1,5 +1,6 @@
 import {
   buildChangeTypeSection,
+  buildUnlinkedUnreleasedHeading,
   buildUnreleasedDefinition,
   buildUnreleasedHeading
 } from '~/builders.js';
@@ -9,10 +10,11 @@ import type { ChangeType } from '~/types.js';
 import { isVersionString } from '~/utilities.js';
 import hostedGitInfo from 'hosted-git-info';
 import type { Node, Nodes, Root } from 'mdast';
+import { toString } from 'mdast-util-to-string';
 import { normalizeIdentifier } from 'micromark-util-normalize-identifier';
 import type { PackageJson } from 'type-fest';
 import flatMap from 'unist-util-flatmap';
-import { select } from 'unist-util-select';
+import { select, selectAll } from 'unist-util-select';
 
 export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, pkg }: {
   changeTypes?: ChangeType[];
@@ -20,6 +22,7 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
 }): Root {
   const repository: string = hostedGitInfo.fromManifest(pkg).browse();
   const hasPreexistingUnreleasedHeading = hasUnreleasedHeading(tree);
+  const releaseHeadingFound = hasReleaseHeading(tree);
 
   let depthTwoHeadingFound = false;
   let versionDefinitionFound = false;
@@ -70,16 +73,23 @@ export function withUnreleasedSection(tree: Root, { changeTypes = CHANGE_TYPES, 
 
   if (!hasUnreleasedHeading(newTree)) {
     newTree.children.push(
-      buildUnreleasedHeading(),
+      releaseHeadingFound
+        ? buildUnreleasedHeading()
+        : buildUnlinkedUnreleasedHeading(),
       ...changeTypes.flatMap(buildChangeTypeSection)
     );
   }
 
-  if (hasUnreleasedHeadingLink(tree) && !hasUnreleasedDefinition(newTree)) {
+  if (hasUnreleasedHeadingLink(tree) && !hasUnreleasedDefinition(newTree) && releaseHeadingFound) {
     newTree.children.push(buildUnreleasedDefinition({ from: pkg.version!, repository }));
   }
 
   return newTree;
+}
+
+export function hasReleaseHeading(tree: Nodes): boolean {
+  return selectAll('heading[depth="2"] > linkReference', tree)
+    .some(node => isVersionString(toString(node)));
 }
 
 export function hasUnreleasedDefinition(tree: Nodes): boolean {

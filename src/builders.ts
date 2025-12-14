@@ -52,6 +52,12 @@ export function buildUnreleasedHeading(): Heading {
   ]);
 }
 
+export function buildUnlinkedUnreleasedHeading(): Heading {
+  return u('heading', { depth: 2 as const }, [
+    u('text', UNRELEASED_IDENTIFIER)
+  ]);
+}
+
 export function buildVersionDefinition({ from, to, repository }: {
   from?: string;
   to: string;
