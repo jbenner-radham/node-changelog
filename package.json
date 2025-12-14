@@ -77,7 +77,7 @@
     "@vitest/coverage-v8": "^4.0.15",
     "cli-testing-library": "^3.0.1",
     "duo-build": "^0.2.1",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
