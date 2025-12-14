@@ -6,7 +6,7 @@ A CLI tool for managing [Keep a Changelog](https://keepachangelog.com/) changelo
 Features
 --------
 
-- Initialize new changelogs.
+- Create new changelogs.
 - Draft new releases or promote unreleased versions.
 - Add unreleased sections to changelogs.
 - Automatically creates and manages version links.
