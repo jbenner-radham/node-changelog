@@ -1,4 +1,4 @@
-import { type Flag } from 'meow';
+import type { Flag } from 'meow';
 
 // These aren't exported from `meow` for whatever reason. So I just copy/pasted them here.
 // From: https://tinyurl.com/7apyy7bk
