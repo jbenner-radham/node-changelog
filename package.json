@@ -2,7 +2,16 @@
   "name": "@radham/changelog",
   "version": "0.0.0",
   "description": "A CLI tool for managing \"Keep a Changelog\" changelogs.",
-  "keywords": [],
+  "keywords": [
+    "changelog",
+    "cli",
+    "keep",
+    "keepachangelog",
+    "manage",
+    "markdown",
+    "tool",
+    "update"
+  ],
   "homepage": "https://github.com/jbenner-radham/node-changelog#readme",
   "bugs": {
     "url": "https://github.com/jbenner-radham/node-changelog/issues"
