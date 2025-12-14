@@ -75,6 +75,7 @@
     "@types/node": "^24.10.2",
     "@types/unist": "^3.0.3",
     "@vitest/coverage-v8": "^4.0.14",
+    "cli-testing-library": "^3.0.1",
     "duo-build": "^0.2.1",
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
