@@ -7,6 +7,7 @@ import { checkbox, confirm, select } from '@inquirer/prompts';
 import { parse as parseVersion } from '@radham/semver';
 import create from '~/commands/create.js';
 import draft from '~/commands/draft.js';
+import interactive from '~/commands/interactive.js';
 import release from '~/commands/release.js';
 import { hasUnreleasedHeading } from '~/operations/draft.js';
 import { withRelease } from '~/operations/release.js';
@@ -218,6 +219,22 @@ if (args.includes('create')) {
 
   ensurePackageHasRequiredProperties(pkg);
   draft({ changeTypes, changelogPath, cli, getMarkdown, pkg, tree });
+
+  process.exit(0);
+} else if (args.includes('interactive')) {
+  const { pkg, tree } = await getContext();
+
+  ensurePackageHasRequiredProperties(pkg);
+
+  try {
+    await interactive({ changeTypes, changelogPath, cli, getMarkdown, pkg, tree });
+  } catch (error) {
+    const message = Error.isError(error) ? error.message : String(error);
+
+    console.error(logSymbols.error, message);
+
+    process.exit(1);
+  }
 
   process.exit(0);
 } else if (args.some(argument => ['major', 'minor', 'patch'].includes(argument))) {
