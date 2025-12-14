@@ -6,7 +6,7 @@ describe('cli', () => {
 
   it('displays help text when ran with no flags or commands', async () => {
     // const { findByText } = await render('changelog');
-    const { findByText } = await render('./dist/esm/cli.js', [], { cwd: process.cwd() });
+    const { findByText } = await render('changelog', [], { cwd: process.cwd() });
 
     expect(await findByText(description)).toBeInTheConsole();
   });
