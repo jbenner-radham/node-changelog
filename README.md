@@ -43,7 +43,7 @@ $ changelog --help
 
   Commands
     create [CHANGELOG]  Create a new changelog.
-    draft [CHANGELOG]   Add an unreleased section to the changelog.
+    draft [CHANGELOG]   Add an unreleased section.
     major [CHANGELOG]   Create a new major release or promote an unreleased
                         section to one.
     minor [CHANGELOG]   Create a new minor release or promote an unreleased

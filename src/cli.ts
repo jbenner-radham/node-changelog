@@ -29,7 +29,7 @@ const cli = meow(
       },
       draft: {
         arguments: [{ name: 'changelog' }],
-        description: 'Add an unreleased section to the changelog.'
+        description: 'Add an unreleased section.'
       },
 
       // TODO: Create this command.
