@@ -7,8 +7,8 @@ Features
 --------
 
 - Create new changelogs.
-- Draft new releases or promote unreleased versions.
-- Add unreleased sections to changelogs.
+- Add new releases or promote unreleased versions.
+- Draft unreleased sections.
 - Automatically creates and manages version links.
 
 Install
