@@ -14,7 +14,9 @@ Features
 Install
 -------
 
-...
+```sh-session
+npm install @radham/changelog
+```
 
 Usage
 -----
