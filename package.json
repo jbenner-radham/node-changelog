@@ -5,6 +5,7 @@
   "keywords": [
     "changelog",
     "cli",
+    "create",
     "draft",
     "keep",
     "keepachangelog",
@@ -12,7 +13,8 @@
     "markdown",
     "release",
     "tool",
-    "update"
+    "update",
+    "utility"
   ],
   "homepage": "https://github.com/jbenner-radham/node-changelog#readme",
   "bugs": {
