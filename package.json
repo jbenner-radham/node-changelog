@@ -1,6 +1,6 @@
 {
   "name": "@radham/changelog",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A CLI tool for managing \"Keep a Changelog\" changelogs.",
   "keywords": [
     "changelog",
