@@ -88,6 +88,7 @@ export function withUnreleasedAsRelease(tree: Root, { pkg, version }: {
     ) {
       foundVersionDefinition = true;
       node.identifier = version;
+      node.label = version;
 
       // TODO: This URL works with GitHub and redirects to the correct URL for GitLab.
       //       Look into this for BitBucket and possibly use the redirect syntax for GitLab.
