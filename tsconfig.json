@@ -50,8 +50,6 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-
-    "forceConsistentCasingInFileNames": true,
   },
   "include": ["src"]
 }
