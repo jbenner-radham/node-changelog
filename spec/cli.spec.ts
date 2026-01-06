@@ -1,9 +1,11 @@
-import { render } from 'cli-testing-library';
+import { configure, render } from 'cli-testing-library';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it as baseIt } from 'vitest';
+
+configure({ renderAwaitTime: 250 });
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -72,9 +74,9 @@ describe('cli', () => {
     it('removes all unreleased references after successfully promoting to a minor release', async ({
       setup: cwd
     }) => {
-      const { findByText } = await render(changelog, ['minor'], { cwd });
+      const { queryByText } = await render(changelog, ['minor'], { cwd });
 
-      expect(async () => await findByText(/\[unreleased]/i)).rejects.toThrow();
+      expect(queryByText(/\[unreleased]/i)).not.toBeInTheConsole();
     });
   });
 });
