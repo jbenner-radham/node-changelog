@@ -98,9 +98,9 @@ const cli = meow(
 
 const args = cli.input.map(value => value.toLowerCase());
 const bullet = cli.flags.bulletListMarker as '*' | '+' | '-';
-const changelogPath = cli.input.length > 1 ? cli.input.at(1)! : 'CHANGELOG.md';
+const changelogPath = path.resolve(cli.input.at(1) ?? 'CHANGELOG.md');
 const changeTypes = (cli.flags.changeType as string[]).map(capitalize) as ChangeType[];
-const cwd = cli.input.length > 1 ? path.dirname(cli.input.at(1)!) : process.cwd();
+const cwd = path.dirname(changelogPath);
 const filepath = path.relative(process.cwd(), changelogPath);
 const packageJsonPath = path.relative(cwd, 'package.json');
 const setext = cli.flags.headingStyle === 'setext';
